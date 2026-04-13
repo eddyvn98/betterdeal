@@ -5,6 +5,7 @@ import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperi
 import { browsingTools, browse_url } from './ai/tools';
 import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding } from './leadStore';
 import { notifyAdmin } from './notifier';
+import { handleExternalQuote } from './externalHandlers';
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -200,6 +201,9 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 });
+
+// Cổng API cho các hệ thống bên ngoài (Web freelancer, Automation, v.v.)
+app.post('/api/v1/external/quote', handleExternalQuote);
 
 const port = Number(process.env.API_PORT || 8787);
 app.listen(port, () => {

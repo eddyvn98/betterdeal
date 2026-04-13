@@ -1,0 +1,17 @@
+[
+  {
+    "id": "T001",
+    "type": "New Project",
+    "customerRequest": "Tôi muốn xây dựng ứng dụng quản lý nhà thuốc, cần có tính năng quét mã vạch và quản lý tồn kho, báo cáo doanh thu hàng ngày."
+  },
+  {
+    "id": "T002",
+    "type": "Upgrade/Repair",
+    "customerRequest": "Website WordPress của tôi đang bị chậm và lỗi thanh toán ngân hàng. Hãy khắc phục và tối ưu tốc độ."
+  },
+  {
+    "id": "T003",
+    "type": "AI Solution",
+    "customerRequest": "Tích hợp chatbot AI vào fanpage Facebook của tôi để tự động tư vấn báo giá dịch vụ spa và chốt lịch hẹn cho khách."
+  }
+]

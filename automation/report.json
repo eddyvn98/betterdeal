@@ -1,0 +1,154 @@
+{
+  "timestamp": "2026-04-13T05:56:45.544Z",
+  "summary": {
+    "total": 3,
+    "success": 3,
+    "avgDuration": "46.30"
+  },
+  "results": [
+    {
+      "id": "T001",
+      "success": true,
+      "duration": 79.324,
+      "reply": "# Giải pháp Quản lý Nhà thuốc Chuyên nghiệp - PixelPro\n\nChào bạn! Emdash rất sẵn lòng hỗ trợ bạn xây...",
+      "lead": {
+        "projectSummary": "Ứng dụng quản lý nhà thuốc với tính năng quét mã vạch, quản lý tồn kho và báo cáo doanh thu hàng ngày.",
+        "projectType": "Web App / Internal Tool",
+        "goals": [
+          "Tự động hóa quản lý hàng hóa bằng mã vạch",
+          "Kiểm soát chính xác lượng tồn kho",
+          "Theo dõi doanh thu hàng ngày tự động"
+        ],
+        "requiredFeatures": [
+          "Quét mã vạch (Barcode scanning)",
+          "Quản lý tồn kho (Inventory management)",
+          "Báo cáo doanh thu (Revenue reporting)"
+        ],
+        "targetUsers": "Chủ nhà thuốc, nhân viên bán hàng",
+        "platforms": [
+          "Web"
+        ],
+        "references": [],
+        "budget": "Chưa xác định",
+        "estimatedQuote": "8.000.000 - 30.000.000 VND",
+        "demoTimeline": "3-5 ngày",
+        "deliveryTimeline": "1-5 tuần",
+        "contactName": "",
+        "contactChannel": "",
+        "contactValue": "",
+        "missingInfo": [
+          "Số lượng nhân viên sử dụng đồng thời",
+          "Sử dụng máy quét mã vạch chuyên dụng hay camera điện thoại",
+          "Quy mô (1 cửa hàng hay chuỗi nhiều cửa hàng)",
+          "Yêu cầu quản lý hạn sử dụng thuốc"
+        ],
+        "nextQuestions": [
+          "Bạn dự định sử dụng máy quét mã vạch cầm tay hay dùng camera điện thoại/máy tính bảng để quét?",
+          "Hệ thống này dành cho một nhà thuốc duy nhất hay bạn có kế hoạch mở chuỗi nhiều cửa hàng?",
+          "Bạn có cần tính năng in hóa đơn trực tiếp từ ứng dụng không?"
+        ],
+        "confidence": "medium",
+        "dealStage": "discovery",
+        "readyToHandoff": false,
+        "adminSummary": "Project: Pharmacy Management App. Features: Barcode, Inventory, Revenue report. Units: Lite (16u), Standard (30u), Elite (60u). Total: 8M, 15M, 30M VND.",
+        "redeemedVoucherCode": null,
+        "appliedDiscount": 0
+      }
+    },
+    {
+      "id": "T002",
+      "success": true,
+      "duration": 27.848,
+      "reply": "Chào bạn, tôi đã tiếp nhận thông tin về vấn đề website WordPress của bạn. Dựa trên mô tả, tôi hiểu r...",
+      "lead": {
+        "projectSummary": "Sửa lỗi website WordPress: khắc phục tình trạng chậm và lỗi thanh toán ngân hàng, tối ưu hóa tốc độ.",
+        "projectType": "Repair & Optimization (WordPress)",
+        "goals": [
+          "Khắc phục lỗi thanh toán ngân hàng",
+          "Tối ưu tốc độ tải trang"
+        ],
+        "requiredFeatures": [
+          "Fix payment gateway integration",
+          "Speed optimization (Caching, Database, Images)",
+          "Bug fixing"
+        ],
+        "targetUsers": "Khách hàng đang truy cập website hiện tại",
+        "platforms": [
+          "Web (WordPress)"
+        ],
+        "references": [],
+        "budget": "Không rõ",
+        "estimatedQuote": "5.000.000 ₫",
+        "demoTimeline": "N/A",
+        "deliveryTimeline": "5-14 ngày",
+        "contactName": "",
+        "contactChannel": "",
+        "contactValue": "",
+        "missingInfo": [
+          "Link website hiện tại",
+          "Thông tin chi tiết về lỗi thanh toán (lỗi khi bấm nút, hay lỗi sau khi chuyển tiền?)",
+          "Thông tin về hosting/server đang sử dụng"
+        ],
+        "nextQuestions": [
+          "Bạn có thể gửi cho tôi đường link website để tôi kiểm tra sơ bộ không?",
+          "Lỗi thanh toán cụ thể là gì (ví dụ: không chuyển hướng được đến trang ngân hàng hay không nhận được phản hồi kết quả thanh toán)?",
+          "Bạn có đang sử dụng plugin thanh toán bên thứ ba nào không?"
+        ],
+        "confidence": "medium",
+        "dealStage": "discovery",
+        "readyToHandoff": false,
+        "adminSummary": "Task: Repair/Upgrade. Units: Payment fix (3 units) + Speed optimization (4 units) + Security/System (3 units). Total units estimated: 10. Total Price: 5.000.000 VND.",
+        "redeemedVoucherCode": "",
+        "appliedDiscount": 0
+      }
+    },
+    {
+      "id": "T003",
+      "success": true,
+      "duration": 31.739,
+      "reply": "Chào bạn! Cảm ơn bạn đã quan tâm đến dịch vụ của PixelPro. Yêu cầu của bạn về việc xây dựng một **Hệ...",
+      "lead": {
+        "projectSummary": "Tích hợp chatbot AI vào fanpage Facebook để tự động tư vấn báo giá dịch vụ spa và chốt lịch hẹn cho khách.",
+        "projectType": "AI assistant / AI workflow tool",
+        "goals": [
+          "Tự động tư vấn báo giá dịch vụ spa",
+          "Chốt lịch hẹn tự động",
+          "Tối ưu hóa phản hồi trên Fanpage Facebook"
+        ],
+        "requiredFeatures": [
+          "Facebook Messenger Integration",
+          "AI Natural Language Understanding",
+          "Automated Pricing Quotation",
+          "Appointment Scheduling"
+        ],
+        "targetUsers": "Khách hàng tiềm năng của Spa",
+        "platforms": [
+          "Facebook Messenger"
+        ],
+        "references": [],
+        "budget": "Chưa xác định",
+        "estimatedQuote": "5,000,000 ₫ - 55,000,000 ₫+",
+        "demoTimeline": "5-7 ngày",
+        "deliveryTimeline": "7-45 ngày",
+        "contactName": "",
+        "contactChannel": "",
+        "contactValue": "",
+        "missingInfo": [
+          "Contact Name",
+          "Contact Channel (Zalo/Telegram)",
+          "Chi tiết về quy trình đặt lịch hiện tại (đang dùng Google Calendar hay phần mềm riêng?)"
+        ],
+        "nextQuestions": [
+          "Bạn hiện đang quản lý lịch hẹn bằng phương pháp nào (Sổ tay, Excel, hay phần mềm quản lý spa chuyên dụng)?",
+          "Bạn muốn chatbot chỉ trả lời theo kịch bản có sẵn hay muốn nó có khả năng trò chuyện tự do như người thật?"
+        ],
+        "confidence": "medium",
+        "dealStage": "discovery",
+        "readyToHandoff": false,
+        "adminSummary": "Project: AI Chatbot for Spa. \nTasks: \n- Facebook Integration (2 units)\n- AI Engine/LLM Integration (5 units)\n- Booking/Scheduling Logic (4 units)\n- Quote Generation Logic (2 units)\nTotal Estimated Units: 13 units.\nStandard Quote: 13 * 500k = 6.5M (Base logic) -> Adjusted to market range 25M for Premium feel/Agent logic. \nLite Quote: 1 unit (Basic script) + 1 unit (Messenger) = 2 units -> 500k (Minimum) -> Adjusted to 5M for market competitiveness.",
+        "redeemedVoucherCode": "",
+        "appliedDiscount": 0
+      }
+    }
+  ]
+}
