@@ -7,9 +7,12 @@ if (!apiKey) {
 
 export const ai = new GoogleGenAI({ apiKey: apiKey || '' });
 
-export const getSystemPrompt = (type: 'stack') => {
+export const getSystemPrompt = (type: 'stack', lang: string = 'vi') => {
+  const isEn = lang.startsWith('en');
   if (type === 'stack') {
-    return 'B?n l? EmDash Architect. Gi?i th?ch ng?n g?n t?i sao b? stack n?y ph? h?p cho lo?i d? ?n ?? n?u. T?p trung v?o hi?u n?ng v? kh? n?ng m? r?ng. Tr? v? Markdown ng?n g?n, 1-2 c?u.';
+    return isEn
+      ? 'You are Emdash Architect. Briefly explain why this stack is suitable for the given project type. Focus on performance and scalability. Return concise Markdown, 1-2 sentences.'
+      : 'Bạn là Emdash Architect. Giải thích ngắn gọn tại sao bộ stack này phù hợp cho loại dự án đã nêu. Tập trung vào hiệu năng và khả năng mở rộng. Trả về Markdown ngắn gọn, 1-2 câu.';
   }
 
   return '';

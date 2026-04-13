@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const HeroContent = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col justify-center">
       <motion.p
@@ -11,7 +13,7 @@ export const HeroContent = () => {
         transition={{ duration: 0.5 }}
         className="mb-4 text-sm font-bold uppercase tracking-[0.25em] text-emerald-600"
       >
-        Làm việc thông minh hơn
+        {t('hero.badge')}
       </motion.p>
 
       <motion.h1
@@ -20,9 +22,9 @@ export const HeroContent = () => {
         transition={{ delay: 0.1, duration: 0.6 }}
         className="mb-6 font-display text-4xl font-extrabold leading-[1.1] text-slate-900 md:text-6xl lg:text-7xl"
       >
-        Deal giá tốt hơn
+        {t('hero.title_main')}
         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-          khi chat cùng AI
+          {t('hero.title_span')}
         </span>
       </motion.h1>
 
@@ -32,8 +34,7 @@ export const HeroContent = () => {
         transition={{ delay: 0.2, duration: 0.6 }}
         className="mb-10 max-w-xl text-lg leading-relaxed text-slate-600 md:text-xl"
       >
-        Trao đổi thẳng thắn, nhận báo giá ngay lập tức. AI của tôi giúp bóc tách yêu cầu và 
-        đề xuất phương án tối ưu nhất về cả chi phí lẫn thời gian. Trải nghiệm ngay để thấy sự khác biệt!
+        {t('hero.description')}
       </motion.p>
 
       <motion.div
@@ -46,14 +47,14 @@ export const HeroContent = () => {
           href="#work" 
           className="group relative overflow-hidden rounded-2xl bg-slate-900 px-8 py-4 font-bold text-white shadow-xl transition-all hover:scale-105 active:scale-95"
         >
-          <span className="relative z-10">Xem các dự án mẫu</span>
+          <span className="relative z-10">{t('hero.view_projects')}</span>
           <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-emerald-500 to-sky-500 transition-transform duration-300 group-hover:translate-x-0" />
         </a>
         <a 
           href="#challenge" 
           className="rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 font-bold text-slate-800 transition-all hover:border-emerald-200 hover:bg-emerald-50/30 active:scale-95"
         >
-          Chat với AI
+          {t('hero.chat_now')}
         </a>
       </motion.div>
     </div>

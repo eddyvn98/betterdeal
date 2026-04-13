@@ -1,374 +1,66 @@
 import { Project } from '../types';
+import { viewxTradingDesk } from './projects/viewx-trading-desk';
+import { tele2codexBridge } from './projects/tele2codex-bridge';
+import { discordvipGateway } from './projects/discordvip-gateway';
+import { stitchStreamingWeb } from './projects/stitch-streaming-web';
+import { telefilmDeliveryPipeline } from './projects/telefilm-delivery-pipeline';
+import { posSalesConsole } from './projects/pos-sales-console';
+import { sieutouchpadRemote } from './projects/sieutouchpad-remote';
+import { webRemoteTv } from './projects/web-remote-tv';
+import { telefilmNew } from './projects/telefilm-new';
+import { rutgonlinkEngine } from './projects/rutgonlink-engine';
+import { giaphaso } from './projects/giaphaso';
+import { mywebfilmLocal } from './projects/mywebfilm-local';
+import { androidKeyboardRemote } from './projects/android-keyboard-remote';
+import { cadPluginAssistant } from './projects/cad-plugin-assistant';
+import { smartcadWorkspace } from './projects/smartcad-workspace';
+import { vicadAssistant } from './projects/vicad-assistant';
+import { giasuOnline } from './projects/giasu-online';
+import { giasuToan } from './projects/giasu-toan';
+import { vetoanhinhPrototype } from './projects/vetoanhinh-prototype';
+import { tradingPythonScript } from './projects/trading-python-script';
+import { tradingAppAuto } from './projects/trading-app-auto';
+import { duaxewebGpt } from './projects/duaxeweb-gpt';
+import { duaxegptUnity } from './projects/duaxegpt-unity';
+import { duaxeAiStudio } from './projects/duaxe-ai-studio';
+import { duaxeMoto } from './projects/duaxe-moto';
+import { suachuanhaRebuild } from './projects/suachuanha-rebuild';
+import { thuniemphongQr } from './projects/thuniemphong-qr';
+import { chatmu } from './projects/chatmu';
+import { meomap } from './projects/meomap';
+import { nga302SalesApp } from './projects/nga302-sales-app';
 
 export const projects: Project[] = [
-  {
-    id: 1,
-    title: 'ViewX Trading Desk',
-    category: 'Trading',
-    stack: ['TypeScript', 'Private Repo', 'Dashboard'],
-    stars: 0,
-    image: '/mockups/viewx-trading-desk.webp',
-    description: 'Một dashboard theo dõi trading với biểu đồ, watchlist và luồng dữ liệu cập nhật liên tục.',
-    longDescription:
-      'Dự án này được dựng từ repo private `ViewX`. Nhìn vào cấu trúc có chart, router, service và websocket, có thể thấy đây là một workspace phục vụ theo dõi thị trường và đọc tín hiệu giao dịch theo thời gian thực.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Telegram to Codex Bridge',
-    category: 'Automation',
-    stack: ['JavaScript', 'Telegram', 'Bridge'],
-    stars: 0,
-    image: '/mockups/tele2codex-bridge.webp',
-    description: 'Cầu nối nhận yêu cầu từ Telegram rồi chuyển thẳng vào môi trường làm việc với code.',
-    longDescription:
-      'Repo `tele2codex` cho thấy hướng làm bot và bridge để đưa tin nhắn, ảnh và chỉ dẫn từ Telegram vào không gian làm việc của lập trình viên. Đây là một dự án automation thiên về giao tiếp và điều phối tác vụ.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 3,
-    title: 'Discord VIP Gateway',
-    category: 'Community',
-    stack: ['TypeScript', 'Discord', 'Ops'],
-    stars: 0,
-    image: '/mockups/discordvip-gateway.webp',
-    description: 'Hệ thống bot và trang quản trị để xác thực thành viên, cấp quyền và vận hành cộng đồng VIP.',
-    longDescription:
-      'Dựa trên repo `discordvip` với nhiều phần app, hạ tầng và tài liệu vận hành, đây là một case study rõ về automation cho cộng đồng trả phí. Trọng tâm nằm ở quy trình cấp role, đồng bộ trạng thái và giảm thao tác thủ công khi quản lý member.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 4,
-    title: 'Stitch Streaming Web',
-    category: 'Media',
-    stack: ['TypeScript', 'Streaming', 'Web UI'],
-    stars: 0,
-    image: '/mockups/stitch-streaming-ui.webp',
-    description: 'Web xem phim với giao diện duyệt nội dung, server riêng và trải nghiệm xem được tổ chức khá rõ.',
-    longDescription:
-      'Repo `stitch` có cấu trúc của một web app media hoàn chỉnh với server, frontend và phần tri thức nội dung. Tôi trình bày nó như một dự án streaming web chú trọng trải nghiệm duyệt phim, tìm nội dung và tiếp tục xem.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 5,
-    title: 'Telefilm Delivery Pipeline',
-    category: 'Automation',
-    stack: ['Python', 'Telethon', 'Content Ops'],
-    stars: 0,
-    image: '/mockups/telefilm-telegram-pipeline.webp',
-    description: 'Pipeline xử lý và vận hành nội dung phim qua bot, backend, frontend và script upload Telegram.',
-    longDescription:
-      'Repo `telefilm` có backend, frontend, bot và nhiều script tác nghiệp như upload, dọn dữ liệu, migrate database. Nhìn tổng thể, đây không chỉ là một bot Telegram mà là cả một pipeline quản lý và phân phối nội dung.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 6,
-    title: 'POS Web Sales Console',
-    category: 'Commerce',
-    stack: ['JavaScript', 'Private Repo', 'Sales System'],
-    stars: 0,
-    image: '/mockups/posweb-sales-console.webp',
-    description: 'Hệ thống bán hàng trên web với dữ liệu, vận hành và tài liệu triển khai được tổ chức khá đầy đủ.',
-    longDescription:
-      'Repo private `posweb` có frontend, backend phụ trợ, cấu hình deploy, tài liệu checklist và nhiều ghi chú triển khai. Tôi xem đây là một sales workspace thực dụng, thiên về vận hành thật hơn là một bản demo giao diện đơn giản.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 7,
-    title: 'SieuTouchpad Remote',
-    category: 'Mobile',
-    stack: ['Kotlin', 'Android', 'Remote Control'],
-    stars: 0,
-    image: '/mockups/sieutouchpad-mobile-remote.webp',
-    description: 'Ứng dụng Android biến điện thoại thành touchpad để điều khiển laptop từ xa.',
-    longDescription:
-      'Repo `sieutouchpad` có app Android và phần `pc_server` cho máy tính. Đây là một utility product khá rõ ràng: dùng điện thoại làm bề mặt điều khiển, kéo gần khoảng cách giữa mobile và desktop trong các tác vụ remote.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 8,
-    title: 'Web Remote TV',
-    category: 'IoT',
-    stack: ['HTML', 'JavaScript', 'PWA'],
-    stars: 0,
-    image: '/mockups/webremotetv-remote-panel.webp',
-    description: 'Remote điều khiển TV qua trình duyệt với cụm nút media, điều hướng và thao tác nhanh.',
-    longDescription:
-      'Repo `webremoteTV` có cấu trúc gọn theo kiểu PWA và static app. Tôi đưa nó lên như một dự án utility cho thiết bị gia dụng, tập trung vào việc điều khiển Android TV trực tiếp từ trình duyệt mà không cần app nặng.',
-    year: '2026',
-    featured: true,
-  },
-  {
-    id: 9,
-    title: 'Telefilm New',
-    category: 'Media',
-    stack: ['TypeScript', 'Private Repo', 'Media Platform'],
-    stars: 0,
-    image: '/mockups/stitch-streaming-ui.webp',
-    description: 'Nhánh phát triển mới của hệ thống media liên quan Telegram và web.',
-    longDescription:
-      'Dù repo private `telefilm-new` không có mô tả công khai, tên gọi và ngữ cảnh cho thấy đây là hướng phát triển tiếp theo của nhóm sản phẩm `telefilm`, có thể là bản làm lại hoặc mở rộng của hệ thống media trước đó.',
-    year: '2026',
-  },
-  {
-    id: 10,
-    title: 'Rut Gon Link Engine',
-    category: 'Utility',
-    stack: ['JavaScript', 'Private Repo', 'Short Link'],
-    stars: 0,
-    image: '/mockups/tele2codex-bridge.webp',
-    description: 'Ứng dụng rút gọn link phục vụ chia sẻ, tracking và các workflow marketing nhỏ.',
-    longDescription:
-      'Theo mô tả repo private `rutgonlink`, đây là app rút gọn link tự làm để phục vụ MMO. Tôi trình bày nó như một utility web tập trung vào tạo link ngắn, quản lý redirect và làm gọn thao tác chia sẻ.',
-    year: '2026',
-  },
-  {
-    id: 11,
-    title: 'Gia Pha So',
-    category: 'Web App',
-    stack: ['TypeScript', 'Data UI', 'Vietnamese Product'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Ứng dụng web tiếng Việt thiên về dữ liệu hoặc tra cứu, hiện chưa có mô tả công khai chi tiết.',
-    longDescription:
-      'Repo `giaphaso` không có mô tả rõ, nên tôi giữ cách trình bày trung tính như một sản phẩm web định hướng dữ liệu và trải nghiệm tra cứu. Đây là kiểu dự án phù hợp với các bài toán thông tin, biểu mẫu hoặc hiển thị nội dung có cấu trúc.',
-    year: '2026',
-  },
-  {
-    id: 12,
-    title: 'My Web Film Local',
-    category: 'Media',
-    stack: ['HTML', 'Private Repo', 'Local Library'],
-    stars: 0,
-    image: '/mockups/stitch-streaming-ui.webp',
-    description: 'Web app quản lý thư viện phim local để xem và sắp xếp nội dung cá nhân.',
-    longDescription:
-      'Theo mô tả repo private `mywebfilm`, đây là một hệ thống quản lý xem phim local. Tôi đưa nó lên như một media utility dành cho nhu cầu tự quản thư viện phim, thay vì phụ thuộc hoàn toàn vào nền tảng bên ngoài.',
-    year: '2026',
-  },
-  {
-    id: 13,
-    title: 'Android Full Keyboard Remote',
-    category: 'Mobile',
-    stack: ['Kotlin', 'Android', 'Input Tool'],
-    stars: 0,
-    image: '/mockups/sieutouchpad-mobile-remote.webp',
-    description: 'Bộ nhập liệu Android dùng chung với remote desktop, thiên về thao tác nhanh và đủ chức năng.',
-    longDescription:
-      'Tên repo `b-n-ph-m-full-ch-c-n-ng-android` cho thấy đây là một utility input cho Android. Dự án phù hợp nhóm mobile productivity, nơi điện thoại đóng vai trò như bàn phím hoặc công cụ điều khiển cho máy khác.',
-    year: '2026',
-  },
-  {
-    id: 14,
-    title: 'CAD Plugin Assistant',
-    category: 'Tooling',
-    stack: ['TypeScript', 'Private Repo', 'CAD'],
-    stars: 0,
-    image: '/mockups/desktop-control-toolkit.webp',
-    description: 'Plugin hoặc công cụ hỗ trợ thao tác trong môi trường CAD.',
-    longDescription:
-      'Theo tên repo private `cadplugin`, đây là một dự án plugin cho CAD. Tôi trình bày nó như một công cụ tăng năng suất cho người dùng kỹ thuật, nơi giá trị nằm ở việc giảm thao tác lặp và hỗ trợ workflow chuyên môn.',
-    year: '2026',
-  },
-  {
-    id: 15,
-    title: 'SmartCAD Workspace',
-    category: 'Tooling',
-    stack: ['TypeScript', 'Private Repo', 'CAD Workflow'],
-    stars: 0,
-    image: '/mockups/desktop-control-toolkit.webp',
-    description: 'Không gian làm việc hoặc sản phẩm hỗ trợ CAD theo hướng thông minh hơn và ít thao tác hơn.',
-    longDescription:
-      'Tên repo private `smartcad` cho thấy đây là một hướng phát triển sản phẩm hỗ trợ CAD. Tôi giữ mô tả ở mức một công cụ workflow cho người dùng kỹ thuật, không suy diễn quá sâu khi chưa đọc hết mã nguồn.',
-    year: '2026',
-  },
-  {
-    id: 16,
-    title: 'ViCAD Assistant',
-    category: 'Tooling',
-    stack: ['TypeScript', 'Private Repo', 'Design Tool'],
-    stars: 0,
-    image: '/mockups/desktop-control-toolkit.webp',
-    description: 'Công cụ hỗ trợ thao tác cho môi trường CAD hoặc thiết kế kỹ thuật.',
-    longDescription:
-      'Repo private `vicad` được mô tả ngắn là “cursor cho cad”. Tôi đưa nó lên như một tool hỗ trợ thao tác và tăng hiệu quả làm việc trong phần mềm kỹ thuật, có thiên hướng utility rõ hơn là sản phẩm consumer.',
-    year: '2026',
-  },
-  {
-    id: 17,
-    title: 'Gia Su Online',
-    category: 'Education',
-    stack: ['TypeScript', 'Private Repo', 'Web Platform'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Nền tảng web cho mô hình gia sư trực tuyến.',
-    longDescription:
-      'Theo tên repo private `giasuonline` và mô tả “bản chuẩn”, đây có thể là phiên bản tương đối hoàn chỉnh của một sản phẩm giáo dục trực tuyến. Tôi trình bày nó như một edtech web platform dành cho dạy và học từ xa.',
-    year: '2026',
-  },
-  {
-    id: 18,
-    title: 'Gia Su Toan',
-    category: 'Education',
-    stack: ['TypeScript', 'Private Repo', 'Learning Product'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Sản phẩm học tập hoặc dạy học tập trung vào môn Toán.',
-    longDescription:
-      'Tên repo private `gia_su_toan` cho thấy định hướng khá rõ về giáo dục Toán. Tôi giữ mô tả ở mức một learning product hoặc nền tảng hỗ trợ học tập, tránh bịa thêm chức năng khi chưa có mô tả chi tiết.',
-    year: '2026',
-  },
-  {
-    id: 19,
-    title: 'Ve Toan Hinh Prototype',
-    category: 'Education',
-    stack: ['Prototype', 'Private Repo', 'Math Visual'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Prototype về toán hình, được ghi chú là một thử nghiệm chưa đi đến kết quả mong muốn.',
-    longDescription:
-      'Repo private `vetoanhinh` có mô tả là dự án về toán hình không thành công. Tôi vẫn giữ nó trong portfolio như một bản thử nghiệm để phản ánh trung thực quá trình làm sản phẩm và khám phá ý tưởng.',
-    year: '2026',
-  },
-  {
-    id: 20,
-    title: 'Trading Kiem Tien',
-    category: 'Trading',
-    stack: ['Python', 'Private Repo', 'Automation'],
-    stars: 0,
-    image: '/mockups/viewx-trading-desk.webp',
-    description: 'Dự án trading bằng Python theo hướng script hóa, tự động hóa hoặc hỗ trợ phân tích.',
-    longDescription:
-      'Repo private `tradingkiemtien` thuộc nhóm trading và dùng Python. Tôi mô tả nó như một nhánh thiên về script, automation hoặc xử lý chiến lược, khác với kiểu dashboard quan sát trực quan như `ViewX`.',
-    year: '2026',
-  },
-  {
-    id: 21,
-    title: 'Trading App',
-    category: 'Trading',
-    stack: ['Private Repo', 'Automation', 'Finance'],
-    stars: 0,
-    image: '/mockups/viewx-trading-desk.webp',
-    description: 'Ứng dụng giao dịch tự động thuộc nhóm sản phẩm tài chính thử nghiệm.',
-    longDescription:
-      'Mô tả repo private `TradingApp` đã nêu khá rõ đây là ứng dụng giao dịch tự động. Tôi đưa nó lên như một sản phẩm tài chính thiên về tự động hóa, phục vụ thử nghiệm chiến lược hoặc vận hành giao dịch.',
-    year: '2025',
-  },
-  {
-    id: 22,
-    title: 'Dua Xe Web GPT',
-    category: 'Game',
-    stack: ['TypeScript', 'Web Game', 'Prototype'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Game đua xe bản web, thuộc nhóm thử nghiệm giải trí tương tác.',
-    longDescription:
-      'Repo `duaxewebgpt` cho thấy một nhánh game web dùng TypeScript. Tôi đưa nó lên như một game prototype, phản ánh mảng giải trí tương tác trong danh mục sản phẩm của anh.',
-    year: '2026',
-  },
-  {
-    id: 23,
-    title: 'Dua Xe GPT',
-    category: 'Game',
-    stack: ['C#', 'Unity', 'Prototype'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Game đua xe dùng Unity, mang tính prototype và khám phá kỹ thuật.',
-    longDescription:
-      'Theo mô tả repo `duaxegpt`, đây là một dự án Unity. Tôi trình bày nó như một prototype game 3D hoặc game đua xe, nơi trọng tâm nằm ở việc thử nghiệm gameplay và hướng triển khai kỹ thuật.',
-    year: '2026',
-  },
-  {
-    id: 24,
-    title: 'Dua Xe AI Studio',
-    category: 'Game',
-    stack: ['AI Studio', 'Web Runtime', 'Experiment'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Thử nghiệm kết hợp AI studio với môi trường chạy trên web.',
-    longDescription:
-      'Mô tả repo `duaxeAIstudio` cho thấy đây là một thử nghiệm pha trộn giữa AI studio và runtime web. Tôi giữ cách trình bày mở như một sản phẩm thử nghiệm thiên về công cụ tạo nội dung hoặc game authoring.',
-    year: '2026',
-  },
-  {
-    id: 25,
-    title: 'Dua Xe Moto',
-    category: 'Game',
-    stack: ['C#', 'Motorbike Game', 'Prototype'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Game đua moto là một dự án cũ hơn trong nhóm game, thiên về cảm giác lái và thử nghiệm gameplay.',
-    longDescription:
-      'Mô tả repo `duaxemoto` cho thấy đây là một game đua moto đã làm từ trước. Tôi đưa nó lên như một dự án game prototype để phản ánh chiều rộng về mảng giải trí của anh, không chỉ tập trung vào web app và automation.',
-    year: '2026',
-  },
-  {
-    id: 26,
-    title: 'Sua Chua Nha Rebuild',
-    category: 'Commerce',
-    stack: ['JavaScript', 'Website', 'Service Business'],
-    stars: 0,
-    image: '/mockups/product-landing-system.webp',
-    description: 'Website cho dịch vụ sửa chữa nhà, theo hướng làm lại hoặc nâng cấp từ bản cũ.',
-    longDescription:
-      'Repo `suachuanha` phù hợp nhóm website dịch vụ. Tôi trình bày nó như một web sản phẩm tập trung vào việc giới thiệu dịch vụ, tạo lead và làm rõ giá trị cung cấp cho khách hàng cuối.',
-    year: '2026',
-  },
-  {
-    id: 27,
-    title: 'Thu Niem Phong QR',
-    category: 'Utility',
-    stack: ['JavaScript', 'QR', 'Security Tool'],
-    stars: 0,
-    image: '/mockups/tele2codex-bridge.webp',
-    description: 'Công cụ tạo QR bảo mật hoặc phục vụ nhu cầu niêm phong thông tin.',
-    longDescription:
-      'Dựa vào mô tả repo `thuniemphong`, đây là một utility xoay quanh QR và yếu tố bảo mật. Tôi giữ nó như một mini product chuyên về công cụ, giải quyết một bài toán nhỏ nhưng cụ thể.',
-    year: '2026',
-  },
-  {
-    id: 28,
-    title: 'Chat Mu',
-    category: 'Communication',
-    stack: ['TypeScript', 'Private Repo', 'Chat App'],
-    stars: 0,
-    image: '/mockups/tele2codex-bridge.webp',
-    description: 'Ứng dụng chat có định hướng giao tiếp tối giản hoặc khác thường.',
-    longDescription:
-      'Repo private `chatmu` được mô tả ngắn là “chat mù”. Tôi trình bày nó như một thử nghiệm về giao tiếp hoặc chat app có cách dùng khác thường, không cố bịa thêm tính năng khi chưa đọc kỹ mã nguồn.',
-    year: '2025',
-  },
-  {
-    id: 29,
-    title: 'MeoMap',
-    category: 'Map',
-    stack: ['JavaScript', 'Private Repo', 'Geo UI'],
-    stars: 0,
-    image: '/mockups/service-status-dashboard.webp',
-    description: 'Sản phẩm bản đồ hoặc giao diện dữ liệu vị trí.',
-    longDescription:
-      'Dù repo private `MeoMap` không có mô tả chi tiết, tên gọi cho thấy đây là dự án thuộc nhóm bản đồ hoặc geospatial. Tôi giữ cách trình bày như một map-based interface hoặc ứng dụng dữ liệu vị trí.',
-    year: '2025',
-  },
-  {
-    id: 30,
-    title: 'Nga302 Sales App',
-    category: 'Commerce',
-    stack: ['Kotlin', 'Private Repo', 'AI Sales'],
-    stars: 0,
-    image: '/mockups/posweb-sales-console.webp',
-    description: 'Ứng dụng bán hàng trên mobile có yếu tố AI.',
-    longDescription:
-      'Theo mô tả repo private `nga302`, đây là một app bán hàng AI dùng Kotlin. Tôi đưa nó lên như một mobile sales product phục vụ vận hành hoặc hỗ trợ đội bán hàng trong bối cảnh thực tế.',
-    year: '2025',
-  },
+  viewxTradingDesk,
+  tele2codexBridge,
+  discordvipGateway,
+  stitchStreamingWeb,
+  telefilmDeliveryPipeline,
+  posSalesConsole,
+  sieutouchpadRemote,
+  webRemoteTv,
+  telefilmNew,
+  rutgonlinkEngine,
+  giaphaso,
+  mywebfilmLocal,
+  androidKeyboardRemote,
+  cadPluginAssistant,
+  smartcadWorkspace,
+  vicadAssistant,
+  giasuOnline,
+  giasuToan,
+  vetoanhinhPrototype,
+  tradingPythonScript,
+  tradingAppAuto,
+  duaxewebGpt,
+  duaxegptUnity,
+  duaxeAiStudio,
+  duaxeMoto,
+  suachuanhaRebuild,
+  thuniemphongQr,
+  chatmu,
+  meomap,
+  nga302SalesApp,
 ];
 
 export const categories = [

@@ -1,4 +1,4 @@
-import { genAI, DEFAULT_MODEL } from './ai/provider';
+import { genAI, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai/provider';
 
 import { buildSystemInstruction } from './ai/prompts';
 import { truncateHistory, cleanJsonString, dataUrlToPart, buildTranscript } from './ai/utils';
@@ -6,7 +6,7 @@ import { ChallengeAIResponseSchema, ChallengeAIResponse, LeadQualification, getG
 import { Message } from '../src/types';
 
 // Re-export for compatibility with server/index.ts
-export { dataUrlToPart, getGeminiResponseSchema };
+export { dataUrlToPart, getGeminiResponseSchema, DEFAULT_MODEL, DEFAULT_GEN_CONFIG };
 export const ai = genAI;
 
 // Quản lý cấu hình AI
@@ -15,10 +15,13 @@ export const ai = genAI;
 /**
  * Lấy cấu hình AI (vô hiệu hóa caching cho bản Free Tier để tránh lỗi 429)
  */
-export const getCachedConfig = async (_modelName: string) => {
+export const getCachedConfig = async (_modelName: string, lang?: string) => {
   // Trả về trực tiếp system instruction thay vì cố gắng tạo CachedContent 
   // vì Gemini 2.5 Flash Free Tier không hỗ trợ storage cache (Limit = 0).
-  return { systemInstruction: getStaticSystemInstruction() };
+  return { 
+    systemInstruction: getStaticSystemInstruction(lang),
+    ...DEFAULT_GEN_CONFIG
+  };
 };
 
 const emptyLead: LeadQualification = {
@@ -42,13 +45,15 @@ const emptyLead: LeadQualification = {
   dealStage: 'discovery',
   readyToHandoff: false,
   adminSummary: '',
+  redeemedVoucherCode: '',
+  appliedDiscount: 0,
 };
 
 /**
  * Lấy chỉ dẫn hệ thống cố định (để có thể cache)
  */
-export const getStaticSystemInstruction = () => {
-  return buildSystemInstruction(0);
+export const getStaticSystemInstruction = (lang: string = 'vi') => {
+  return buildSystemInstruction(0, lang);
 };
 
 /**
@@ -121,12 +126,14 @@ export const normalizeChallengeResponse = (rawText: string): ChallengeAIResponse
   if (!validation.success) {
     console.warn('Zod Validation Warning (Partial match attempted):', validation.error.format());
     
-    // Luôn ưu tiên trả về reply nếu có, kể cả khi lead hỏng
-    const reply = (parsedJson?.reply || '').trim();
+    // Nỗ lực cứu vãn dữ liệu lead từ AI nếu có, thay vì dùng emptyLead nguyên bản
+    const partialLead = typeof parsedJson.lead === 'object' && parsedJson.lead !== null 
+      ? { ...emptyLead, ...parsedJson.lead }
+      : emptyLead;
 
     return {
-      reply: reply || 'Phản hồi không đúng cấu trúc yêu cầu, vui lòng thử lại.',
-      lead: { ...emptyLead, adminSummary: '⚠️ Zod validation failed' },
+      reply: (parsedJson?.reply || '').trim() || 'Phản hồi không đúng cấu trúc yêu cầu, vui lòng thử lại.',
+      lead: partialLead,
     };
   }
 

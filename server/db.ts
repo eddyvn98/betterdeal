@@ -48,8 +48,33 @@ db.exec(`
     confidence TEXT NOT NULL DEFAULT 'low',
     deal_stage TEXT NOT NULL DEFAULT 'discovery',
     ready_to_handoff INTEGER NOT NULL DEFAULT 0,
+    is_shared_experience INTEGER NOT NULL DEFAULT 0,
+    experience_embedding TEXT, --- JSON string of vector
     admin_summary TEXT NOT NULL DEFAULT '',
     updated_at TEXT NOT NULL,
     FOREIGN KEY (session_id) REFERENCES sessions(id)
   );
 `);
+
+// Migration an toàn cho database hiện tại
+try {
+  const tableInfo = db.prepare("PRAGMA table_info(leads)").all() as any[];
+  const hasSharedExp = tableInfo.some(col => col.name === 'is_shared_experience');
+  const hasEmbedding = tableInfo.some(col => col.name === 'experience_embedding');
+
+  if (!hasSharedExp) {
+    db.exec("ALTER TABLE leads ADD COLUMN is_shared_experience INTEGER NOT NULL DEFAULT 0");
+  }
+  if (!hasEmbedding) {
+    db.exec("ALTER TABLE leads ADD COLUMN experience_embedding TEXT");
+  }
+
+  const msgTableInfo = db.prepare("PRAGMA table_info(messages)").all() as any[];
+  const hasAttachments = msgTableInfo.some(col => col.name === 'attachments_json');
+  if (!hasAttachments) {
+    db.exec("ALTER TABLE messages ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'");
+  }
+} catch (e) {
+  console.warn('Migration warning (expected if columns already exist):', e);
+}
+

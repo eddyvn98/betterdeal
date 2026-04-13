@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 
 interface FeatureCardProps {
   title: string;
@@ -42,26 +43,28 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, label, va
 };
 
 export const HeroFeatureCards = () => {
-  const features: FeatureCardProps[] = [
+  const { t } = useTranslation();
+
+  const features = [
     {
       title: 'Input',
-      label: 'Gửi gì cũng được',
-      description: 'Chat, ảnh chụp, link hay ghi chú lộn xộn... cứ đưa đây cho tôi xử lý.',
-      variant: 'dark',
+      label: t('hero.features.input.label'),
+      description: t('hero.features.input.desc'),
+      variant: 'dark' as const,
       delay: 0.3,
     },
     {
       title: 'AI Support',
-      label: 'Cùng làm rõ',
-      description: 'Tự động phát hiện chỗ thiếu, gợi ý câu hỏi để chắc chắn chúng mình hiểu nhau.',
-      variant: 'light',
+      label: t('hero.features.ai_support.label'),
+      description: t('hero.features.ai_support.desc'),
+      variant: 'light' as const,
       delay: 0.4,
     },
     {
       title: 'Output',
-      label: 'Xong việc luôn',
-      description: 'Nhận báo giá tối ưu, minh bạch và bắt tay vào làm ngay không sợ sai hướng.',
-      variant: 'accent',
+      label: t('hero.features.output.label'),
+      description: t('hero.features.output.desc'),
+      variant: 'accent' as const,
       delay: 0.5,
     },
   ];

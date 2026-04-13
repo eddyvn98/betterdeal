@@ -29,25 +29,25 @@ export const AISkeleton = () => (
     </div>
     
     <div className="space-y-3">
-      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-200/40">
         <motion.div 
           animate={{ x: ['-100%', '100%'] }}
           transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-100/30 to-transparent will-change-transform"
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent will-change-transform"
         />
       </div>
-      <div className="relative h-2.5 w-4/5 overflow-hidden rounded-full bg-slate-100">
+      <div className="relative h-2.5 w-4/5 overflow-hidden rounded-full bg-slate-200/40">
         <motion.div 
           animate={{ x: ['-100%', '100%'] }}
           transition={{ repeat: Infinity, duration: 2, delay: 0.3, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-100/30 to-transparent will-change-transform"
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent will-change-transform"
         />
       </div>
-      <div className="relative h-2.5 w-2/3 overflow-hidden rounded-full bg-slate-100">
+      <div className="relative h-2.5 w-2/3 overflow-hidden rounded-full bg-slate-200/40">
         <motion.div 
           animate={{ x: ['-100%', '100%'] }}
           transition={{ repeat: Infinity, duration: 2, delay: 0.6, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-100/30 to-transparent will-change-transform"
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent will-change-transform"
         />
       </div>
     </div>

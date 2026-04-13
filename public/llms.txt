@@ -1,0 +1,36 @@
+# PixelPro | Better Deal - Premium AI Partner
+
+PixelPro (Better Deal) is an elite software engineering partner specializing in High-Performance Web Development and AI Integration. We bridge the gap between complex engineering and business value.
+
+## Core Value Proposition
+- **High-Performance Web**: Building scalable, SEO-optimized, and lightning-fast web applications using React, Next.js, and TypeScript.
+- **AI Integration**: Custom AI solutions, RAG (Retrieval-Augmented Generation) systems, and AI-driven automation for business workflows.
+- **Premium Design**: Crafting visually stunning, high-conversion user interfaces with modern aesthetics.
+
+## Technical Stack (Expertise)
+- **Frontend**: React, Next.js, TypeScript, TailwindCSS, Motion (Framer), Vite.
+- **Backend/Automation**: Node.js, Python (Telethon/Selenium), Go (optional).
+- **Integration**: OpenAI API, Gemini API, Telegram bot API, Discord API, WebSockets.
+- **Tools**: Git, Docker, CI/CD, Figma.
+
+## Key Services
+1. **Custom Web App Development**: From concept to production, focusing on scalability and performance.
+2. **AI Pre-sales Consultant**: Intelligent AI agents that qualify leads and provide instant technical consultation.
+3. **Legacy Migration**: Modernizing tech stacks to maintain competitive advantage.
+
+## Featured Projects (Machine-Extractable)
+1. **ViewX: Alpha Trading Intelligence**: High-performance market monitoring dashboard focusing on real-time data stability and informed decision-making.
+2. **CodexFlow: Agile Dev-Comms Bridge**: Intelligent middleware that streamlines developer focus by automating technical communication between Telegram and dev environments.
+3. **VIPGate: Automated Community Infrastructure**: Scalable membership gateway for large-scale communities, prioritizing seamless onboarding and automated role management.
+4. **Stitch Media: Adaptive Streaming Engine**: Premium media streaming platform using ABR technology to deliver immersive, cinema-grade entertainment experiences.
+5. **FilmFlow: Automated Content Orchestration**: End-to-end content distribution pipeline using Python and Telethon to liberate administrators from repetitive manual workflows.
+6. **Pragmatic Retail: High-Efficiency POS**: Offline-first point-of-sale system leveraging modern web standards to ensure frictionless retail operations and customer trust.
+
+## Contact & Links
+- **Website**: https://PixelPro.vivutrade.io.vn
+- **GitHub**: https://github.com/eddyvn98
+- **Email**: eddyvn98@gmail.com
+- **Inquiry**: Use the on-site AI Chat for instant quotes and lead qualification.
+
+---
+*Note: This file is optimized for consumption by Large Language Models (LLMs) and AI Agents for accurate citation and tool-calling capabilities.*

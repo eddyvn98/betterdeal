@@ -1,0 +1,169 @@
+{
+  "header": {
+    "projects": "Projects",
+    "chat_ai": "Chat with AI",
+    "quick_quote": "Quick Quote"
+  },
+  "hero": {
+    "badge": "Work Smarter",
+    "title_main": "Better Deals",
+    "title_span": "via AI powered chat",
+    "description": "Direct communication, instant quotes. My AI helps break down requirements and propose the best solution for both cost and time. Experience the difference now!",
+    "view_projects": "View Sample Projects",
+    "chat_now": "Chat with AI",
+    "status_calculating": "Calculating quote...",
+    "promo_text": "10% off for your first project!",
+    "features": {
+      "input": {
+        "label": "Send anything",
+        "desc": "Chat, screenshots, links, or messy notes... just let me handle it."
+      },
+      "ai_support": {
+        "label": "Clarify together",
+        "desc": "Automatically detect missing info, suggest questions to ensure we're on the same page."
+      },
+      "output": {
+        "label": "Get it done",
+        "desc": "Get optimal, transparent quotes and start immediately with confidence."
+      }
+    }
+  },
+  "capabilities": {
+    "badge": "Core Capabilities",
+    "title_main": "Senior",
+    "title_senior": "Engineering",
+    "title_creative": "Pragmatic",
+    "title_pragmatic": "Creativity",
+    "cards": {
+      "automation": {
+        "title": "Automation & Bots",
+        "desc": "Developing bot ecosystems for process automation and large-scale community management."
+      },
+      "trading": {
+        "title": "Real-time Trading",
+        "desc": "Building financial dashboards and processing real-time market data streams."
+      },
+      "media": {
+        "title": "Media Streaming",
+        "desc": "High-performance video distribution architecture and digital asset management."
+      },
+      "ai": {
+        "title": "AI Workflows",
+        "desc": "Integrating AI to automate decisions and optimize business workflows."
+      },
+      "mobile": {
+        "title": "Native Mobile",
+        "desc": "Android apps with system-level control for remote management and performance."
+      },
+      "iot": {
+        "title": "IoT Interfaces",
+        "desc": "Seamless hardware control solutions via smooth Web/Mobile interfaces."
+      },
+      "pos": {
+        "title": "POS Systems",
+        "desc": "Pragmatic, lean point-of-sale systems designed for business operations."
+      },
+      "edtech": {
+        "title": "EdTech Platforms",
+        "desc": "Highly interactive online learning platforms with optimized user experience."
+      },
+      "performance": {
+        "title": "High Performance",
+        "desc": "Specialized tools focused on speed, scalability, and absolute security."
+      }
+    }
+  },
+  "chat": {
+    "welcome": "Hello! I am Emdash, the AI virtual assistant for PixelPro. I have data on projects and real-world quotes. What kind of product would you like to build?",
+    "input_placeholder": "Describe the product you want to build...",
+    "analyzing": "Analyzing requirements...",
+    "send": "Send",
+    "reset": "Reset Chat",
+    "upload": "Upload",
+    "pricing_hint": "Estimated Quote",
+    "contact_admin": "Contact Admin",
+    "error": "Sorry, the system is busy. Please leave your phone number, Zalo, or Telegram for the admin to contact you directly.",
+    "no_ai_response": "No AI response yet.",
+    "image_attachment_label": "User sent additional reference images.",
+    "welcome_title": "Welcome to emdash",
+    "welcome_desc": "I am PixelPro's AI assistant specialized in breaking down software requirements and estimating quotes.",
+    "guide_title": "How to get started?",
+    "guide_step1": "Describe your idea or send a preliminary brief file.",
+    "guide_step2": "Specify your budget and desired timeline (if any).",
+    "guide_step3": "Attach reference images of interfaces you like.",
+    "lang_switch": "Preferred Language",
+    "closing_hint": "If you are not satisfied with the price, please send your full requirements (e.g., {{project_summary}}) and reference prices from ChatGPT / Gemini to get the best deal, then send them to us via Zalo/Telegram. We will meet your requirements."
+  },
+  "featured": {
+    "title": "Selected case studies",
+    "description": "The projects below are presented as showcases to clarify how I handle products, interfaces, and automation.",
+    "view_all": "View all",
+    "more_work_title": "More work",
+    "more_work_desc": "View more case studies organized by capability group for a cleaner and more convincing portfolio."
+  },
+  "projects": {
+    "back_home": "Back to home",
+    "title": "Project showcase",
+    "description": "This is how I present product implementation capabilities: low noise, strong visuals, short descriptions, and focus on value delivered.",
+    "category_all": "All"
+  },
+  "project_modal": {
+    "overview": "Project Overview",
+    "stack": "Technical Stack",
+    "ai_hint": "Click the AI button on the card to generate analysis for this project.",
+    "ai_hint_long": "Based on source code and architecture analysis, the **{{title}}** system demonstrates exceptional optimization in handling complex constraints. The Emdash AI model identifies this as a prime case study for balancing pragmatism with technical performance.",
+    "ai_hint_role": "AI Technical Analysis"
+  },
+  "footer": {
+    "tagline": "Pioneering AI-driven software development for pragmatic results.",
+    "links_title": "Explore",
+    "services_title": "Services",
+    "social_title": "Connect",
+    "built_with": "Proudly built with",
+    "copyright": "© 2026 PixelPro betterdeal. An Emdash identity."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Quick answers to common questions about services, workflow, and how to get in touch.",
+    "q1": {
+      "q": "Do you take small freelance projects or only large systems?",
+      "a": "I handle a wide range of projects, from automation bots and trading tools to management systems. The focus is always on pragmatic solutions that deliver real value."
+    },
+    "q2": {
+      "q": "How can I contact you directly for a consultation?",
+      "a": "You can chat with the AI assistant for an initial estimate, or click the 'Contact Admin' button to reach me directly via Zalo, Telegram, or Phone."
+    },
+    "q3": {
+      "q": "What is the quoting process for an AI project?",
+      "a": "You can use our online AI chatbot directly on this site to get an instant estimated quote based on your technical requirements and project scale."
+    },
+    "q4": {
+      "q": "Can I pay in installments or split the payment into stages?",
+      "a": "Absolutely. I support splitting payments based on project milestones, allowing you to manage your budget easily and ensure quality at every step."
+    },
+    "q5": {
+      "q": "Do you offer a demo before formalizing the project?",
+      "a": "Yes. For complex projects, I can develop a Demo/PoC (Proof of Concept) with a small deposit, helping you verify the solution's effectiveness before committing to the full scope."
+    }
+  },
+  "site_title": "PixelPro | Better Deal • Premium AI Partner",
+  "game": {
+    "title": "Flappy Discount",
+    "turns_left": "Turns left",
+    "ready": "READY?",
+    "desc": "Dodge the pipes to earn rewards up to 80%. 100k Voucher + % discount based on score.",
+    "start": "START GAME",
+    "game_over": "GAME OVER",
+    "score": "Score",
+    "best": "Best",
+    "current_reward": "Current Reward",
+    "plus_voucher": "+ 100,000 VND Voucher",
+    "retry": "RETRY",
+    "redeem": "REDEEM NOW",
+    "stop_and_redeem": "Stop and Redeem Reward",
+    "best_reward_label": "Best Reward",
+    "cta_title": "Get 80% Voucher 🎮",
+    "cta_desc": "Hunt for 100k voucher + up to 80% off",
+    "redeem_msg": "I just finished playing Flappy Bird with a score of {{score}}. I received a 100k Voucher and a {{discount}}% discount. My voucher code is: {{voucherCode}}. Please apply this offer and update the quote for me!"
+  }
+}

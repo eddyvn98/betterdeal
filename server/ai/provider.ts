@@ -8,5 +8,14 @@ if (!apiKey) {
 
 export const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
 
-// Default model configuration
-export const DEFAULT_MODEL = 'gemini-2.5-flash';
+// --- MODEL LOCK (GEMINI 2.5 FLASH) ---
+// To restore: export const DEFAULT_MODEL = 'gemini-2.5-flash';
+// --------------------------------------
+
+// Active model: Gemma 4 26B (Mixture-of-Experts)
+export const DEFAULT_MODEL = 'gemma-4-26b-a4b-it';
+
+/**
+ * Cấu hình AI mặc định
+ */
+export const DEFAULT_GEN_CONFIG = {};

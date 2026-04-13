@@ -2,12 +2,12 @@ import React from 'react';
 import { HeroSection } from '../components/HeroSection';
 import { Capabilities } from '../components/Capabilities';
 import { FeaturedProjects } from '../components/FeaturedProjects';
+import { FAQSection } from '../components/FAQSection';
 import { ChatSection } from '../components/ChatSection';
 import { Project, Message, LeadQualification } from '../types';
 
 interface HomePageProps {
   projects: Project[];
-  setSelectedProject: (project: Project) => void;
   handleAiAnalysis: (project: Project) => void;
   loadingProjects: Set<number>;
   projectAiInfo: Record<number, string>;
@@ -24,11 +24,12 @@ interface HomePageProps {
   adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
   onResetSession: () => void;
   onChatVisibilityChange: (inView: boolean) => void;
+  onOpenGame: () => void;
+  onFilesAttached: (files: File[]) => void;
 }
 
 export const HomePage = ({
   projects,
-  setSelectedProject,
   handleAiAnalysis,
   loadingProjects,
   projectAiInfo,
@@ -45,17 +46,19 @@ export const HomePage = ({
   adminStatus,
   onResetSession,
   onChatVisibilityChange,
+  onOpenGame,
+  onFilesAttached,
 }: HomePageProps) => (
-  <>
+  <main>
     <HeroSection />
     <Capabilities />
     <FeaturedProjects
       projects={projects}
-      onSelect={setSelectedProject}
       onAiAnalysis={handleAiAnalysis}
       loadingProjects={loadingProjects}
       projectAiInfo={projectAiInfo}
     />
+    <FAQSection />
     <ChatSection
       chatMessages={chatMessages}
       isAnalyzing={isAnalyzing}
@@ -70,6 +73,8 @@ export const HomePage = ({
       adminStatus={adminStatus}
       onResetSession={onResetSession}
       onVisibilityChange={onChatVisibilityChange}
+      onOpenGame={onOpenGame}
+      onFilesAttached={onFilesAttached}
     />
-  </>
+  </main>
 );

@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
-import { ai, buildDynamicContext, buildMessageContents, dataUrlToPart, getCachedConfig, normalizeChallengeResponse } from './ai';
-import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge } from './ai/knowledge';
+import { ai, buildDynamicContext, buildMessageContents, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
+import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperience, generateEmbedding } from './ai/knowledge';
 import { browsingTools, browse_url } from './ai/tools';
-import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead } from './leadStore';
+import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding } from './leadStore';
 import { notifyAdmin } from './notifier';
 
 const app = express();
@@ -32,10 +32,11 @@ app.get('/api/sessions/:sessionId', (req, res) => {
 });
 
 app.post('/api/chat', async (req, res) => {
-  const { sessionId, message, attachments } = req.body as {
+  const { sessionId, message, attachments, lang } = req.body as {
     sessionId?: string;
     message?: string;
     attachments?: string[];
+    lang?: string;
   };
 
   if (!sessionId || !message) {
@@ -46,7 +47,7 @@ app.post('/api/chat', async (req, res) => {
     return res.status(404).json({ error: 'Session not found' });
   }
 
-  addMessage(sessionId, 'user', message);
+  addMessage(sessionId, 'user', message, attachments);
 
   const history = getMessages(sessionId);
   const currentLead = getLead(sessionId);
@@ -54,14 +55,17 @@ app.post('/api/chat', async (req, res) => {
   const startTime = Date.now();
 
   try {
-    const modelName = 'gemini-2.5-flash';
-    const cachedConfig = await getCachedConfig(modelName);
+    const modelName = DEFAULT_MODEL;
+    const cachedConfig = await getCachedConfig(modelName, lang);
     const conversationHistory = buildMessageContents(history, attachments);
     const leadContext = buildDynamicContext(currentLead);
     
-    // RAG: Tìm kiếm tri thức liên quan tới nội dung chat
-    const relevantKB = await searchKnowledge(message);
-    const kbContext = buildKnowledgeContext(relevantKB);
+    // RAG: Tìm kiếm tri thức liên quan tới nội dung chat (Quy tắc + Kinh nghiệm cũ)
+    const [relevantKB, relevantExp] = await Promise.all([
+      searchKnowledge(message),
+      searchExperience(message)
+    ]);
+    const kbContext = buildKnowledgeContext(relevantKB, relevantExp);
 
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Chat start (Session: ${sessionId}, Model: ${modelName})`);
     
@@ -140,6 +144,7 @@ app.post('/api/chat', async (req, res) => {
         config: {
           ...cachedConfig,
           responseMimeType: 'application/json',
+          ...DEFAULT_GEN_CONFIG,
         },
       });
     }
@@ -159,6 +164,18 @@ app.post('/api/chat', async (req, res) => {
     upsertLead(sessionId, parsed.lead);
 
     if (parsed.lead.readyToHandoff) {
+      // Tự động lưu bộ nhớ kinh nghiệm khi chốt deal (chỉ lưu tóm tắt kỹ thuật, ẩn thông tin cá nhân)
+      if (!currentLead.readyToHandoff) {
+        console.log(`[${new Date().toLocaleTimeString()}] [SYSTEM] Learning from successful deal (Session: ${sessionId})...`);
+        generateEmbedding(parsed.lead.projectSummary)
+          .then(embedding => {
+            if (embedding && embedding.length > 0) {
+              saveExperienceEmbedding(sessionId, embedding);
+            }
+          })
+          .catch(err => console.error('Failed to save experience:', err));
+      }
+
       try {
         setAdminStatus(sessionId, 'sending');
         await notifyAdmin(sessionId, parsed.lead, getMessages(sessionId));

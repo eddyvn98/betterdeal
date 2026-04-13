@@ -1,13 +1,18 @@
-# Gemini AI Project Rules
+# AI Model Project Rules
 
-## 1. AI Model Restriction
-- **STRICT REQUIREMENT:** Guaranteed minimum model version is **Gemini 2.5 Flash**.
-- **FORBIDDEN:** Using any models below Gemini 2.5 Flash (e.g., 1.5 Flash, 1.0 Pro) is strictly prohibited as per project engineering standards.
+## 1. AI Model Standards
+- **ACTIVE MODEL:** **Gemma 4 26B-A4B**. 
+- **LEGACY STANDARDS:** Guaranteed minimum model version was Gemini 2.5 Flash. Models below Gemini 2.5 Flash remain strictly prohibited.
+- **RESTRICTION:** Gemini 2.5 Flash configuration is currently **LOCKED** and preserved in `server/ai/provider.ts` for emergency rollback only.
 
-## 2. Technical Constraints (Free Tier)
-- **Context Caching:** Disabled. The current Free Tier for Gemini 2.5 Flash does not support `CachedContent` storage (Quota limit = 0). Do not attempt to use `ai.caches.create`.
-- **Rate Limits:** Be mindful of the 429 Resource Exhausted errors. If quota is exceeded, the server will log the error and wait for the cooldown period.
+## 2. Configuration (Gemma 4)
+- **Thinking Mode:** Explicitly **DISABLED** (`thinkingBudget: 0`) for the sales consultant role to ensure direct, fast, and deterministic responses.
+- **Context Window:** Leveraging up to 256k tokens for complex lead qualification and RAG.
 
-## 3. Knowledge Base (RAG)
+## 3. Technical Constraints (Free Tier)
+- **Context Caching:** Disabled. The current Free Tier does not support `CachedContent` storage (Quota limit = 0).
+- **Rate Limits:** Be mindful of the 429 Resource Exhausted errors.
+
+## 4. Knowledge Base (RAG)
 - Uses `models/gemini-embedding-001` for semantic search.
 - Pre-sales scenarios are stored in `server/data/knowledge_base.json`.

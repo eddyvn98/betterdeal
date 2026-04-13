@@ -21,6 +21,7 @@ export const sendChatMessage = async (payload: {
   sessionId: string;
   message: string;
   attachments: string[];
+  lang?: string;
 }): Promise<ChatApiResponse> => {
   const response = await fetch(`${API_BASE}/chat`, {
     method: 'POST',

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { ProjectCard } from '../components/ProjectCard';
 import { Project } from '../types';
 import { categories } from '../data/projects';
@@ -11,7 +12,6 @@ interface ProjectsPageProps {
   projects: Project[];
   filter: string;
   setFilter: (filter: string) => void;
-  onSelect: (project: Project) => void;
   onAiAnalysis: (project: Project) => void;
   loadingProjects: Set<number>;
   projectAiInfo: Record<number, string>;
@@ -21,27 +21,27 @@ export const ProjectsPage = ({
   projects,
   filter,
   setFilter,
-  onSelect,
   onAiAnalysis,
   loadingProjects,
   projectAiInfo,
 }: ProjectsPageProps) => {
   const { pathname } = useLocation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
   return (
-    <section className="min-h-screen bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.98))] px-6 py-24">
+    <main className="min-h-screen bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.98))] px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 max-w-3xl">
           <Link to="/" className="mb-6 inline-flex items-center gap-2 font-bold text-slate-500 transition-colors hover:text-emerald-600">
-            <ArrowLeft size={18} /> Quay lại trang chủ
+            <ArrowLeft size={18} /> {t('projects.back_home')}
           </Link>
-          <h1 className="font-display text-4xl font-bold text-slate-900">Project showcase</h1>
+          <h1 className="font-display text-4xl font-bold text-slate-900">{t('projects.title')}</h1>
           <p className="mt-3 text-lg leading-7 text-slate-500">
-            Đây là cách tôi trình bày năng lực triển khai sản phẩm: ít nhiễu, hình ảnh mạnh, mô tả ngắn và tập trung vào giá trị làm được.
+            {t('projects.description')}
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export const ProjectsPage = ({
                   : 'border border-slate-200 bg-white text-slate-500 hover:border-emerald-300 hover:text-slate-900',
               )}
             >
-              {cat}
+              {cat === 'All' ? t('projects.category_all') : cat}
             </button>
           ))}
         </div>
@@ -70,7 +70,6 @@ export const ProjectsPage = ({
                 <ProjectCard
                   key={project.id}
                   project={project}
-                  onSelect={onSelect}
                   onAiAnalysis={onAiAnalysis}
                   loading={loadingProjects.has(project.id)}
                   aiInfo={projectAiInfo[project.id]}
@@ -79,6 +78,6 @@ export const ProjectsPage = ({
           </AnimatePresence>
         </div>
       </div>
-    </section>
+    </main>
   );
 };

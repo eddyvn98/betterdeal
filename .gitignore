@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+.gitnexus/
+scratch/
+*.sqlite-shm
+*.sqlite-wal
+*.mp4

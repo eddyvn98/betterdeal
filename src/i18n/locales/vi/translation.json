@@ -1,0 +1,172 @@
+{
+  "header": {
+    "projects": "Dự án",
+    "chat_ai": "Chat với AI",
+    "quick_quote": "Báo giá nhanh"
+  },
+  "hero": {
+    "badge": "Làm việc thông minh hơn",
+    "title_main": "Deal giá tốt hơn",
+    "title_span": "khi chat cùng AI",
+    "description": "Trao đổi thẳng thắn, nhận báo giá ngay lập tức. AI của tôi giúp bóc tách yêu cầu và đề xuất phương án tối ưu nhất về cả chi phí lẫn thời gian. Trải nghiệm ngay để thấy sự khác biệt!",
+    "view_projects": "Xem các dự án mẫu",
+    "chat_now": "Chat với AI",
+    "status_calculating": "Đang tính toán báo giá...",
+    "promo_text": "Ưu đãi -10% cho dự án đầu tiên!",
+    "features": {
+      "input": {
+        "label": "Gửi gì cũng được",
+        "desc": "Chat, ảnh chụp, link hay ghi chú lộn xộn... cứ đưa đây cho tôi xử lý."
+      },
+      "ai_support": {
+        "label": "Cùng làm rõ",
+        "desc": "Tự động phát hiện chỗ thiếu, gợi ý câu hỏi để chắc chắn chúng mình hiểu nhau."
+      },
+      "output": {
+        "label": "Xong việc luôn",
+        "desc": "Nhận báo giá tối ưu, minh bạch và bắt tay vào làm ngay không sợ sai hướng."
+      }
+    }
+  },
+  "capabilities": {
+    "badge": "Năng lực cốt lõi",
+    "title_main": "Kỹ thuật",
+    "title_senior": "Senior",
+    "title_creative": "Sáng tạo",
+    "title_pragmatic": "Thực dụng.",
+    "cards": {
+      "automation": {
+        "title": "Automation & Bots",
+        "desc": "Phát triển hệ sinh thái bot tự động hóa quy trình và quản lý cộng đồng VIP quy mô lớn."
+      },
+      "trading": {
+        "title": "Real-time Trading",
+        "desc": "Xây dựng Dashboard tài chính và xử lý luồng dữ liệu chứng khoán thời gian thực."
+      },
+      "media": {
+        "title": "Media Streaming",
+        "desc": "Kiến trúc phân phối video và quản lý thư viện nội dung số năng suất cao."
+      },
+      "ai": {
+        "title": "AI Workflows",
+        "desc": "Tích hợp AI giúp tự động hóa quyết định và tối ưu quy trình doanh nghiệp."
+      },
+      "mobile": {
+        "title": "Native Mobile",
+        "desc": "App Android can thiệp hệ thống để điều khiển từ xa và tối ưu hiệu năng."
+      },
+      "iot": {
+        "title": "IoT Interfaces",
+        "desc": "Giải pháp điều khiển phần cứng qua giao diện Web/Mobile mượt mà."
+      },
+      "pos": {
+        "title": "POS Systems",
+        "desc": "Thiết kế hệ thống quản lý bán hàng thực dụng, tinh gọn cho doanh nghiệp."
+      },
+      "edtech": {
+        "title": "EdTech Platforms",
+        "desc": "Nền tảng học trực tuyến tương tác cao với trải nghiệm người dùng tối ưu."
+      },
+      "performance": {
+        "title": "High Performance",
+        "desc": "Công cụ chuyên biệt tập trung vào tốc độ, khả năng mở rộng và bảo mật tuyệt đối."
+      }
+    }
+  },
+  "chat": {
+    "welcome": "Xin chào! Tôi là Emdash, trợ lý ảo AI của PixelPro. Tôi có dữ liệu về các dự án và báo giá thực tế. Bạn muốn xây dựng sản phẩm gì?",
+    "input_placeholder": "Nhập mô tả sản phẩm bạn muốn xây dựng...",
+    "analyzing": "Đang phân tích yêu cầu...",
+    "send": "Gửi",
+    "reset": "Làm mới phiên chat",
+    "upload": "Tải ảnh",
+    "pricing_hint": "Báo giá dự kiến",
+    "contact_admin": "Trao đổi với Admin",
+    "error": "Xin lỗi, hệ thống đang bận. Bạn để lại số điện thoại, Zalo hoặc Telegram để admin liên hệ trực tiếp.",
+    "no_ai_response": "Chưa có phản hồi từ AI.",
+    "image_attachment_label": "Khách gửi thêm ảnh tham khảo.",
+    "welcome_title": "Chào mừng bạn đến với emdash",
+    "welcome_desc": "Tôi là trợ lý AI chuyên bóc tách yêu cầu và báo giá phần mềm của PixelPro.",
+    "guide_title": "Bắt đầu như thế nào?",
+    "guide_step1": "Mô tả ý tưởng hoặc gửi file brief sơ bộ.",
+    "guide_step2": "Đưa ra ngân sách và thời gian mong muốn (nếu có).",
+    "guide_step3": "Đính kèm ảnh tham khảo về giao diện bạn thích.",
+    "lang_switch": "Ngôn ngữ ưa thích",
+    "closing_hint": "Nếu bạn chưa hài lòng về giá, hãy gửi đầy đủ yêu cầu (ví dụ: {{project_summary}}) và tham khảo giá từ ChatGPT / Gemini để được giá tốt nhất sau đó hãy gửi về Zalo/Telegram. Chúng tôi sẽ đáp ứng yêu cầu của bạn."
+  },
+  "featured": {
+    "title": "Case study tiêu biểu",
+    "description": "Các dự án bên dưới được trình bày như project showcase để làm rõ cách tôi xử lý sản phẩm, giao diện và automation.",
+    "view_all": "Xem toàn bộ",
+    "more_work_title": "Xem thêm Dự án",
+    "more_work_desc": "Xem thêm các case study được sắp xếp theo nhóm năng lực để portfolio nhìn gọn và thuyết phục hơn."
+  },
+  "projects": {
+    "back_home": "Quay lại trang chủ",
+    "title": "Project showcase",
+    "description": "Đây là cách tôi trình bày năng lực triển khai sản phẩm: ít nhiễu, hình ảnh mạnh, mô tả ngắn và tập trung vào giá trị làm được.",
+    "category_all": "Tất cả"
+  },
+  "project_modal": {
+    "overview": "Tổng quan dự án",
+    "stack": "Công nghệ sử dụng",
+    "ai_hint": "Nhấn nút AI ngoài danh sách để xem phân tích chi tiết cho dự án này.",
+    "ai_hint_long": "Dựa trên phân tích mã nguồn và kiến trúc, hệ thống **{{title}}** thể hiện sự tối ưu vượt trội trong việc xử lý các ràng buộc phức tạp. Mô hình Emdash AI đánh giá đây là một case study điển hình về việc kết hợp tính thực dụng và hiệu suất kỹ thuật.",
+    "ai_hint_role": "Phân tích Kỹ thuật từ AI"
+  },
+  "footer": {
+    "tagline": "Tiên phong ứng dụng AI vào quy trình triển khai phần mềm thực dụng.",
+    "links_title": "Khám phá",
+    "services_title": "Dịch vụ",
+    "social_title": "Kết nối",
+    "built_with": "Được xây dựng tự hào với",
+    "copyright": "© 2026 PixelPro betterdeal. Một bản sắc của Emdash."
+  },
+  "faq": {
+    "title": "Câu hỏi thường gặp",
+    "description": "Giải đáp nhanh các thắc mắc phổ biến về dịch vụ, quy trình làm việc và cách thức liên hệ.",
+    "q1": {
+      "q": "Bạn có nhận các dự án freelance lẻ hay chỉ làm hệ thống lớn?",
+      "a": "Tôi nhận đa dạng các loại dự án, từ bot tự động hóa, công cụ trading cho đến website quản lý. Quan trọng là giải pháp thực dụng và mang lại giá trị thực tế cho bạn."
+    },
+    "q2": {
+      "q": "Tôi có thể liên hệ trực tiếp với bạn qua đâu để trao đổi chi tiết?",
+      "a": "Bạn có thể chat trực tiếp với trợ lý AI để nhận báo giá sơ bộ, hoặc nhấn nút 'Trao đổi với Admin' để kết nối với tôi qua Zalo/Telegram/Phone."
+    },
+    "q3": {
+      "q": "Quy trình báo giá cho một dự án AI như thế nào?",
+      "a": "Bạn có thể sử dụng chatbot AI trực tuyến ngay trên website của chúng tôi để nhận báo giá dự kiến tức thì dựa trên các yêu cầu kỹ thuật và quy mô dự án."
+    },
+    "q4": {
+      "q": "Tôi có thể thanh toán theo đợt hoặc trả góp không?",
+      "a": "Hoàn toàn được. Tôi hỗ trợ chia nhỏ thanh toán theo các giai đoạn nghiệm thu (milestones) của dự án để bạn dễ dàng quản lý dòng tiền và an tâm về chất lượng."
+    },
+    "q5": {
+      "q": "Bạn có nhận làm demo trước khi ký hợp đồng chính thức không?",
+      "a": "Có. Với các dự án phức tạp, tôi nhận triển khai bản Demo/PoC (Proof of Concept) với một khoản chi phí đặt cọc nhỏ để bạn kiểm chứng hiệu quả trước khi quyết định đi đường dài."
+    }
+  },
+  "site_title": "PixelPro | Better Deal • Đối tác AI cao cấp",
+  "game": {
+    "title": "Flappy Discount",
+    "turns_left": "Lượt chơi còn lại",
+    "ready": "SẴN SÀNG?",
+    "get_ready": "CHUẨN BỊ!",
+    "instructions": "Chạm hoặc Nhấn phím Cách để Bay",
+    "desc": "Bay lách qua các cột để nhận ưu đãi lên đến 80%. Voucher 100k + % giảm giá theo điểm số.",
+    "start": "BẮT ĐẦU CHƠI",
+    "game_over": "TRÒ CHƠI KẾT THÚC",
+    "score": "Điểm số",
+    "best": "Kỷ lục",
+    "current_reward": "Ưu đãi hiện tại",
+    "plus_voucher": "+ Voucher 100,000 VND",
+    "retry": "THỬ LẠI",
+    "redeem": "NHẬN VOUCHER NGAY",
+    "stop_and_redeem": "Dừng tại đây và nhận thưởng",
+    "best_reward_label": "Phần thưởng tốt nhất",
+    "cta_title": "Săn Voucher 80% 🎮",
+    "cta_desc": "Săn voucher 100k + ưu đãi đến 50%",
+    "redeem_msg": "Tôi vừa chơi xong Flappy Bird với số điểm là {{score}}. Tôi nhận được Voucher 100k và mức giảm giá {{discount}}%. Mã voucher của tôi là: {{voucherCode}}. Hãy áp dụng ưu đãi này và cập nhật báo giá cho tôi nhé!",
+    "system_redeem_success": "Voucher đã được tạo thành công với hội thoại này, vui lòng cho xin thông tin để sử dụng được voucher bất kì lúc nào."
+  }
+}

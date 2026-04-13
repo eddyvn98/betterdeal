@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { HeroFeatureCards } from './HeroFeatureCards';
 
 export const HeroVisual = () => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -38,7 +41,7 @@ export const HeroVisual = () => {
       >
         <div className="flex items-center gap-3">
           <div className="h-3 w-3 rounded-full bg-emerald-500 opacity-75" />
-          <span className="text-xs font-bold text-slate-700">Đang tính toán báo giá...</span>
+          <span className="text-xs font-bold text-slate-700">{t('hero.status_calculating')}</span>
         </div>
       </motion.div>
 
@@ -50,7 +53,7 @@ export const HeroVisual = () => {
       >
         <div className="flex items-center gap-3">
           <div className="h-3 w-3 rounded-full bg-sky-500" />
-          <span className="text-xs font-bold text-slate-700">Ưu đãi -10% cho dự án đầu tiên!</span>
+          <span className="text-xs font-bold text-slate-700">{t('hero.promo_text')}</span>
         </div>
       </motion.div>
     </motion.div>

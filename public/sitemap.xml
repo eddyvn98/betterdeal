@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://PixelPro.vivutrade.io.vn/</loc>
+    <lastmod>2026-04-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://PixelPro.vivutrade.io.vn/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://PixelPro.vivutrade.io.vn/?lang=vi"/>
+  </url>
+  <url>
+    <loc>https://PixelPro.vivutrade.io.vn/projects</loc>
+    <lastmod>2026-04-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://PixelPro.vivutrade.io.vn/projects"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://PixelPro.vivutrade.io.vn/projects?lang=vi"/>
+  </url>
+</urlset>

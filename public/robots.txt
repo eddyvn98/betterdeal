@@ -1,0 +1,27 @@
+# Professional AI-friendly robots.txt for 2026
+User-agent: *
+Allow: /
+
+# Specifically allow major AI crawlers for LLM training and RAG
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://PixelPro.vivutrade.io.vn/sitemap.xml

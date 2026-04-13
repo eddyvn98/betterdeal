@@ -11,9 +11,12 @@ import { HeroSection } from './components/HeroSection';
 import { FeaturedProjects } from './components/FeaturedProjects';
 import { Capabilities } from './components/Capabilities';
 import { ChatSection } from './components/ChatSection';
-import { ProjectModal } from './components/ProjectModal';
+import { useTranslation } from 'react-i18next';
 import { FloatingChat } from './components/FloatingChat';
+import { FlappyBirdGame } from './components/FlappyBirdGame';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProjectsPage } from './pages/ProjectsPage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { HomePage } from './pages/HomePage';
 
 const emptyLead: LeadQualification = {
@@ -39,11 +42,11 @@ const emptyLead: LeadQualification = {
   adminSummary: '',
 };
 
-const storageKey = 'emdash-portfolio-session-id';
+const storageKey = 'Emdash-portfolio-session-id';
 
 const App = () => {
+  const { t, i18n } = useTranslation();
   const [filter, setFilter] = useState('All');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [challengeInput, setChallengeInput] = useState('');
@@ -55,7 +58,14 @@ const App = () => {
   const [adminStatus, setAdminStatus] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle');
   const [sessionId, setSessionId] = useState('');
   const [isChatVisible, setIsChatVisible] = useState(true);
+  const [isGameOpen, setIsGameOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const activeChallengeRequestsRef = useRef(0);
+  const sendLockRef = useRef(false);
+
+  useEffect(() => {
+    document.title = t('site_title');
+  }, [i18n.language, t]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -97,17 +107,34 @@ const App = () => {
     bootstrap();
   }, []);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAttachedImages((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
+  const handleFiles = async (files: File[]) => {
+    const promises = Array.from(files).map((file) => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (typeof reader.result === 'string') {
+            resolve(reader.result);
+          } else {
+            reject(new Error('Failed to read file as data URL'));
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     });
+
+    try {
+      const results = await Promise.all(promises);
+      setAttachedImages((prev) => [...prev, ...results]);
+    } catch (error) {
+      console.error('Error processing files:', error);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      handleFiles(Array.from(e.target.files));
+    }
   };
 
   const removeImage = (index: number) => {
@@ -118,16 +145,17 @@ const App = () => {
     prompt: string,
     type: 'challenge' | 'stack',
     projectId: number | null = null,
+    options: { silent?: boolean } = {}
   ) => {
     if (!prompt) return;
 
     if (type === 'challenge') {
-      setIsAnalyzing(true);
+      if (!options.silent) {
+        activeChallengeRequestsRef.current += 1;
+      }
     } else if (projectId !== null) {
       setLoadingProjects((prev) => new Set(prev).add(projectId));
     }
-
-    const startTime = Date.now();
 
     try {
       if (type === 'challenge') {
@@ -139,47 +167,87 @@ const App = () => {
           sessionId,
           message: prompt,
           attachments: attachedImages,
+          lang: i18n.language,
         });
 
-        // Add a small delay if the response is too fast to prevent flickering
-        const elapsed = Date.now() - startTime;
-        if (elapsed < 400) {
-          await new Promise(resolve => setTimeout(resolve, 400 - elapsed));
+        // If silent, just update lead data and don't touch chat messages
+        if (options.silent) {
+          setLead(response.lead);
+          setAdminStatus(response.adminStatus);
+          return;
         }
 
-        setChatMessages((prev) => [...prev, response.message]);
+        // Replace the optimistic placeholder bubble with the real response
+        setChatMessages((prev) => {
+          const placeholderIndex = [...prev]
+            .map((msg, idx) => ({ msg, idx }))
+            .reverse()
+            .find(({ msg }) => msg.role === 'model' && (!msg.content || msg.content.trim() === ''))
+            ?.idx;
+
+          if (placeholderIndex === undefined) {
+            return [...prev, response.message];
+          }
+
+          const next = [...prev];
+          next[placeholderIndex] = response.message;
+          return next;
+        });
         setLead(response.lead);
         setAdminStatus(response.adminStatus);
         setAttachedImages([]);
       } else if (projectId !== null) {
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemma-4-26b-a4b-it',
           contents: prompt,
           config: {
-            systemInstruction: getSystemPrompt('stack'),
+            systemInstruction: getSystemPrompt('stack', i18n.language),
           },
         });
 
         setProjectAiInfo((prev) => ({
           ...prev,
-          [projectId]: response.text || 'Chưa có phản hồi từ AI.',
+          [projectId]: response.text || t('chat.no_ai_response'),
         }));
       }
     } catch (error) {
       console.error('AI Error:', error);
 
-      if (type === 'challenge') {
-        setChatMessages((prev) => [
-          ...prev,
-          {
+      if (type === 'challenge' && !options.silent) {
+        // Replace the optimistic placeholder with the error message
+        setChatMessages((prev) => {
+          const placeholderIndex = [...prev]
+            .map((msg, idx) => ({ msg, idx }))
+            .reverse()
+            .find(({ msg }) => msg.role === 'model' && (!msg.content || msg.content.trim() === ''))
+            ?.idx;
+
+          const errorMessage: Message = {
             role: 'model',
-            content: 'Xin lỗi, hệ thống đang bận. Bạn để lại số điện thoại, Zalo hoặc Telegram để admin liên hệ trực tiếp.',
-          },
-        ]);
+            content: t('chat.error'),
+          };
+
+          if (placeholderIndex === undefined) {
+            return [...prev, errorMessage];
+          }
+
+          const next = [...prev];
+          next[placeholderIndex] = errorMessage;
+          return next;
+        });
         setAdminStatus('failed');
+      } else if (type === 'challenge' && options.silent) {
+        console.warn('Silent voucher sync failed. User may need to manually confirm later.');
       }
     } finally {
-      if (type === 'challenge') setIsAnalyzing(false);
+      if (type === 'challenge' && !options.silent) {
+        activeChallengeRequestsRef.current = Math.max(0, activeChallengeRequestsRef.current - 1);
+        const hasPending = activeChallengeRequestsRef.current > 0;
+        setIsAnalyzing(hasPending);
+        if (!hasPending) {
+          sendLockRef.current = false;
+        }
+      }
       if (projectId !== null) {
         setLoadingProjects((prev) => {
           const next = new Set(prev);
@@ -189,20 +257,34 @@ const App = () => {
       }
     }
   };
-  
-  const handleSendMessage = () => {
-    if ((!challengeInput.trim() && attachedImages.length === 0) || isBootstrapping) return;
 
-    const content = challengeInput.trim() || 'Khách gửi thêm ảnh tham khảo.';
-    
-    requestAnimationFrame(() => {
-      setChatMessages((prev) => [...prev, { role: 'user', content }]);
+  const handleSendMessage = (forcedContent?: string, options: { silent?: boolean } = {}) => {
+    const isForced = typeof forcedContent === 'string' && forcedContent.length > 0;
+    if (!options.silent && (isAnalyzing || sendLockRef.current)) return;
+    if (!isForced && (!challengeInput.trim() && attachedImages.length === 0) || isBootstrapping) return;
+
+    const content = isForced ? forcedContent : (challengeInput.trim() || t('chat.image_attachment_label'));
+
+    // 1. Update state (React 18+ will batch these automatically)
+    if (!options.silent) {
+      sendLockRef.current = true;
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'user', content, attachments: attachedImages },
+        { role: 'model', content: '' },
+      ]);
+      setIsAnalyzing(true);
+    }
+
+    if (!isForced) {
       setChallengeInput('');
-    });
+    }
+    setAttachedImages([]);
 
-    generateAiContent(content, 'challenge');
+    // 2. Execute AI call
+    generateAiContent(content, 'challenge', null, options);
   };
-  
+
   const handleResetSession = async () => {
     setIsAnalyzing(true);
     try {
@@ -242,7 +324,6 @@ const App = () => {
             element={
               <HomePage
                 projects={projects}
-                setSelectedProject={setSelectedProject}
                 handleAiAnalysis={handleAiAnalysis}
                 loadingProjects={loadingProjects}
                 projectAiInfo={projectAiInfo}
@@ -259,6 +340,8 @@ const App = () => {
                 adminStatus={adminStatus}
                 onResetSession={handleResetSession}
                 onChatVisibilityChange={setIsChatVisible}
+                onOpenGame={() => setIsGameOpen(true)}
+                onFilesAttached={handleFiles}
               />
             }
           />
@@ -270,21 +353,18 @@ const App = () => {
                 projects={projects}
                 filter={filter}
                 setFilter={setFilter}
-                onSelect={setSelectedProject}
                 onAiAnalysis={handleAiAnalysis}
                 loadingProjects={loadingProjects}
                 projectAiInfo={projectAiInfo}
               />
             }
           />
-        </Routes>
 
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-          loading={selectedProject ? loadingProjects.has(selectedProject.id) : false}
-          aiInfo={selectedProject ? projectAiInfo[selectedProject.id] : undefined}
-        />
+          <Route
+            path="/projects/:slug"
+            element={<ProjectDetailPage />}
+          />
+        </Routes>
 
         <FloatingChat
           messages={chatMessages}
@@ -294,7 +374,44 @@ const App = () => {
           setInputValue={setChallengeInput}
           onSend={handleSendMessage}
           onScrollToMain={scrollToChat}
+          onFilesAttached={handleFiles}
         />
+
+        {isGameOpen && (
+          <ErrorBoundary
+            fallback={
+              <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/90 backdrop-blur-md">
+                <div className="text-center p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl max-w-sm">
+                  <h2 className="text-2xl font-bold text-rose-500 mb-4">Game Error</h2>
+                  <p className="text-slate-400 mb-6 text-sm">Trình duyệt của bạn có thể không hỗ trợ tính năng đồ họa này hoặc có lỗi xảy ra.</p>
+                  <button onClick={() => setIsGameOpen(false)} className="bg-emerald-600 px-6 py-3 rounded-xl font-bold text-white">Quay lại Chat</button>
+                </div>
+              </div>
+            }
+          >
+            <FlappyBirdGame
+              onClose={() => setIsGameOpen(false)}
+              onRedeem={(score, discount, voucherCode) => {
+                setIsGameOpen(false);
+
+                // 1. Construct messages
+                const userMsg = t('game.redeem_msg', { score, discount, voucherCode });
+                const systemConfirmation = t('game.system_redeem_success');
+
+                // 2. Instant UI update with hardcoded bubbles (No AI wait)
+                setChatMessages((prev) => [
+                  ...prev,
+                  { role: 'user', content: userMsg },
+                  { role: 'model', content: systemConfirmation }
+                ]);
+
+                // 3. Silent background sync to update Lead state on server
+                handleSendMessage(userMsg, { silent: true });
+                scrollToChat();
+              }}
+            />
+          </ErrorBoundary>
+        )}
 
         <Footer />
       </div>
@@ -303,3 +420,4 @@ const App = () => {
 };
 
 export default App;
+

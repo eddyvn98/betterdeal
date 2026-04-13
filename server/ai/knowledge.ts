@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ai } from '../ai';
+import { db } from '../db';
 
 // Định nghĩa cấu trúc tri thức
 interface KnowledgeItem {
@@ -31,7 +32,7 @@ function cosineSimilarity(vecA: number[], vecB: number[]) {
 /**
  * Tạo embedding cho một văn bản
  */
-async function generateEmbedding(text: string): Promise<number[]> {
+export async function generateEmbedding(text: string): Promise<number[]> {
   const start = Date.now();
   try {
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Embedding start: "${text.substring(0, 30)}..."`);
@@ -108,16 +109,63 @@ export async function searchKnowledge(query: string, limit: number = 2) {
 }
 
 /**
+ * Tìm kiếm các kinh nghiệm thực tế từ các Lead đã chốt
+ */
+export async function searchExperience(query: string, limit: number = 2) {
+  const queryEmbedding = await generateEmbedding(query);
+  if (queryEmbedding.length === 0) return [];
+
+  // Lấy danh sách các lead đã được đánh dấu là kinh nghiệm dùng chung
+  const rows = db.prepare('SELECT project_summary, project_type, estimated_quote, experience_embedding FROM leads WHERE is_shared_experience = 1 AND experience_embedding IS NOT NULL').all() as any[];
+  
+  const results = rows
+    .map(row => {
+      let embedding: number[] = [];
+      try {
+        embedding = JSON.parse(row.experience_embedding);
+      } catch (e) {
+        return { ...row, score: 0 };
+      }
+      
+      return {
+        ...row,
+        score: cosineSimilarity(queryEmbedding, embedding)
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .filter(item => item.score > 0.75) // Ngưỡng tương đồng cho kinh nghiệm (khắt khe hơn)
+    .slice(0, limit);
+
+  return results.map(item => ({
+    summary: item.project_summary,
+    type: item.project_type,
+    quote: item.estimated_quote
+  }));
+}
+
+/**
  * Build chuỗi Context từ kết quả search kiến thức
  */
-export function buildKnowledgeContext(searchResults: { question: string, answer: string }[]) {
-  if (searchResults.length === 0) return '';
+export function buildKnowledgeContext(searchResults: { question: string, answer: string }[], experienceResults: { summary: string, type: string, quote: string }[] = []) {
+  const contexts = [];
 
-  return [
-    '--- START OF INTERNAL KNOWLEDGE BASE REFERENCES ---',
-    'Use the following approved sales strategies/templates if relevant to the client concern:',
-    ...searchResults.map(res => `CLIENT CONCERN: "${res.question}"\nAPPROVED RESPONSE TEMPLATE: "${res.answer}"`),
-    '--- END OF KNOWLEDGE BASE REFERENCES ---',
-    ''
-  ].join('\n');
+  if (searchResults.length > 0) {
+    contexts.push(
+      '--- START OF INTERNAL KNOWLEDGE BASE REFERENCES ---',
+      'Use the following approved sales strategies/templates if relevant to the client concern:',
+      ...searchResults.map(res => `CLIENT CONCERN: "${res.question}"\nAPPROVED RESPONSE TEMPLATE: "${res.answer}"`),
+      '--- END OF KNOWLEDGE BASE REFERENCES ---'
+    );
+  }
+
+  if (experienceResults.length > 0) {
+    contexts.push(
+      '--- START OF SIMILAR PAST PROJECTS (CASE STUDIES) ---',
+      'Here are some anonymized examples of similar projects we have successfully quoted/delivered before. Use these patterns to keep your current quote consistent and professional. DO NOT reveal that these are specific individual clients.',
+      ...experienceResults.map(exp => `PROJECT TYPE: ${exp.type}\nPAST REQUIREMENT: "${exp.summary}"\nPAST QUOTE: ${exp.quote}`),
+      '--- END OF SIMILAR PAST PROJECTS ---'
+    );
+  }
+
+  return contexts.length > 0 ? contexts.join('\n\n') + '\n' : '';
 }

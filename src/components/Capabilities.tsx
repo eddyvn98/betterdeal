@@ -10,6 +10,7 @@ import {
   GraduationCap, 
   ShieldCheck
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CapabilityCard } from './CapabilityCard';
 import { CapabilitiesBackground } from './CapabilitiesBackground';
 import { 
@@ -21,23 +22,27 @@ import {
 } from './VisualSimulations';
 
 export const Capabilities = () => {
+  const { t } = useTranslation();
+
   return (
     <section id="capabilities" className="relative scroll-mt-24 bg-slate-50/50 px-6 py-24 overflow-hidden">
       <CapabilitiesBackground />
       
       <div className="mx-auto max-w-6xl relative">
         <div className="mb-16 text-center md:text-left">
-          <h2 className="font-display text-xs font-bold uppercase tracking-[0.4em] text-emerald-600">Năng lực cốt lõi</h2>
+          <h2 className="font-display text-xs font-bold uppercase tracking-[0.4em] text-emerald-600">
+            {t('capabilities.badge')}
+          </h2>
           <h3 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
-            Kỹ thuật <span className="text-emerald-600">Senior</span> & <br className="hidden md:block" />
-            Sáng tạo <span className="text-teal-500 underline decoration-teal-200 decoration-4 underline-offset-8">Thực dụng.</span>
+            {t('capabilities.title_main')} <span className="text-emerald-600">{t('capabilities.title_senior')}</span> & <br className="hidden md:block" />
+            {t('capabilities.title_creative')} <span className="text-teal-500 underline decoration-teal-200 decoration-4 underline-offset-8">{t('capabilities.title_pragmatic')}</span>
           </h3>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4 md:grid-rows-4">
           <CapabilityCard
-            title="Automation & Bots"
-            description="Phát triển hệ sinh thái bot tự động hóa quy trình và quản lý cộng đồng VIP quy mô lớn."
+            title={t('capabilities.cards.automation.title')}
+            description={t('capabilities.cards.automation.desc')}
             icon={<Bot />}
             tags={['Telegram', 'Discord', 'Automation']}
             className="md:col-span-2 md:row-span-2"
@@ -46,8 +51,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="Real-time Trading"
-            description="Xây dựng Dashboard tài chính và xử lý luồng dữ liệu chứng khoán thời gian thực."
+            title={t('capabilities.cards.trading.title')}
+            description={t('capabilities.cards.trading.desc')}
             icon={<TrendingUp />}
             tags={['WebSockets', 'Finance']}
             className="md:col-span-2 md:row-span-1"
@@ -56,8 +61,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="Media Streaming"
-            description="Kiến trúc phân phối video và quản lý thư viện nội dung số năng suất cao."
+            title={t('capabilities.cards.media.title')}
+            description={t('capabilities.cards.media.desc')}
             icon={<PlayCircle />}
             tags={['HLS', 'Streaming']}
             className="md:col-span-1 md:row-span-1"
@@ -66,8 +71,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="AI Workflows"
-            description="Tích hợp AI giúp tự động hóa quyết định và tối ưu quy trình doanh nghiệp."
+            title={t('capabilities.cards.ai.title')}
+            description={t('capabilities.cards.ai.desc')}
             icon={<BrainCircuit />}
             tags={['AI Studio', 'LLMs']}
             className="md:col-span-1 md:row-span-2"
@@ -76,8 +81,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="Native Mobile"
-            description="App Android can thiệp hệ thống để điều khiển từ xa và tối ưu hiệu năng."
+            title={t('capabilities.cards.mobile.title')}
+            description={t('capabilities.cards.mobile.desc')}
             icon={<Smartphone />}
             tags={['Kotlin', 'System']}
             className="md:col-span-1 md:row-span-1"
@@ -86,8 +91,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="IoT Interfaces"
-            description="Giải pháp điều khiển phần cứng qua giao diện Web/Mobile mượt mà."
+            title={t('capabilities.cards.iot.title')}
+            description={t('capabilities.cards.iot.desc')}
             icon={<Cast />}
             tags={['PWA', 'Hardware']}
             className="md:col-span-2 md:row-span-1"
@@ -96,8 +101,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="POS Systems"
-            description="Thiết kế hệ thống quản lý bán hàng thực dụng, tinh gọn cho doanh nghiệp."
+            title={t('capabilities.cards.pos.title')}
+            description={t('capabilities.cards.pos.desc')}
             icon={<ShoppingBag />}
             tags={['Enterprise', 'Retail']}
             className="md:col-span-1 md:row-span-1"
@@ -106,8 +111,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="EdTech Platforms"
-            description="Nền tảng học trực tuyến tương tác cao với trải nghiệm người dùng tối ưu."
+            title={t('capabilities.cards.edtech.title')}
+            description={t('capabilities.cards.edtech.desc')}
             icon={<GraduationCap />}
             tags={['UI/UX', 'Education']}
             className="md:col-span-1 md:row-span-1"
@@ -116,8 +121,8 @@ export const Capabilities = () => {
           />
 
           <CapabilityCard
-            title="High Performance"
-            description="Công cụ chuyên biệt tập trung vào tốc độ, khả năng mở rộng và bảo mật tuyệt đối."
+            title={t('capabilities.cards.performance.title')}
+            description={t('capabilities.cards.performance.desc')}
             icon={<ShieldCheck />}
             tags={['Security', 'Optimization']}
             className="md:col-span-2 md:row-span-1"
