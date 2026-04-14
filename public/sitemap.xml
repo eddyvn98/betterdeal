@@ -3,199 +3,199 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Main Pages -->
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://PixelPro.vivutrade.io.vn/"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://PixelPro.vivutrade.io.vn/?lang=vi"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pixelpro.vivutrade.io.vn/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pixelpro.vivutrade.io.vn/?lang=vi"/>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://PixelPro.vivutrade.io.vn/projects"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://PixelPro.vivutrade.io.vn/projects?lang=vi"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pixelpro.vivutrade.io.vn/projects"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pixelpro.vivutrade.io.vn/projects?lang=vi"/>
   </url>
 
   <!-- Projects -->
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/android-keyboard-remote</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/android-keyboard-remote</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/cad-plugin-assistant</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/cad-plugin-assistant</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/chatmu</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/chatmu</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/discordvip-gateway</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/discordvip-gateway</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/duaxe-ai-studio</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/duaxe-ai-studio</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/duaxe-moto</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/duaxe-moto</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/duaxegpt-unity</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/duaxegpt-unity</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/duaxeweb-gpt</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/duaxeweb-gpt</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/giaphaso</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/giaphaso</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/giasu-online</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/giasu-online</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/giasu-toan</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/giasu-toan</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/meomap</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/meomap</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/mywebfilm-local</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/mywebfilm-local</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/nga302-sales-app</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/nga302-sales-app</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/pos-sales-console</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/pos-sales-console</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/rutgonlink-engine</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/rutgonlink-engine</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/sieutouchpad-remote</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/sieutouchpad-remote</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/smartcad-workspace</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/smartcad-workspace</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/stitch-streaming-web</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/stitch-streaming-web</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/suachuanha-rebuild</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/suachuanha-rebuild</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/tele2codex-bridge</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/tele2codex-bridge</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/telefilm-delivery-pipeline</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/telefilm-delivery-pipeline</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/telefilm-new</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/telefilm-new</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/thuniemphong-qr</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/thuniemphong-qr</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/trading-app-auto</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/trading-app-auto</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/trading-python-script</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/trading-python-script</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/vetoanhinh-prototype</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/vetoanhinh-prototype</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/vicad-assistant</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/vicad-assistant</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/viewx-trading-desk</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/viewx-trading-desk</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://PixelPro.vivutrade.io.vn/projects/web-remote-tv</loc>
+    <loc>https://pixelpro.vivutrade.io.vn/projects/web-remote-tv</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

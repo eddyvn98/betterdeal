@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { ai, buildDynamicContext, buildMessageContents, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
 import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperience, generateEmbedding } from './ai/knowledge';
 import { browsingTools, browse_url } from './ai/tools';
@@ -9,6 +11,9 @@ import { handleExternalQuote } from './externalHandlers';
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Khởi tạo kho tri thức khi server chạy
 initKnowledgeBase().catch(console.error);
@@ -204,6 +209,17 @@ app.post('/api/chat', async (req, res) => {
 
 // Cổng API cho các hệ thống bên ngoài (Web freelancer, Automation, v.v.)
 app.post('/api/v1/external/quote', handleExternalQuote);
+
+// Phục vụ các file static từ thư mục dist (sau khi build frontend)
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
+// Route cuối cùng: Phục vụ index.html cho tất cả các request không phải API (hỗ trợ client-side routing)
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(distPath, 'index.html'));
+  }
+});
 
 const port = Number(process.env.API_PORT || 8787);
 app.listen(port, () => {

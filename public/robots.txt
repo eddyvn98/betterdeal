@@ -24,4 +24,4 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-Sitemap: https://PixelPro.vivutrade.io.vn/sitemap.xml
+Sitemap: https://pixelpro.vivutrade.io.vn/sitemap.xml

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pixelpro-app
+    restart: always
+    ports:
+      - "${HOST_PORT:-8081}:8787"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - API_PORT=8787
+    volumes:
+      - pixelpro_data:/app/data
+      - ./automation:/app/automation
+
+volumes:
+  pixelpro_data:

@@ -81,8 +81,8 @@ export const ProjectDetailPage = () => {
           "@type": "Person",
           "name": "PixelPro"
         },
-        "image": `https://PixelPro.vivutrade.io.vn${foundProject.image}`,
-        "url": `https://PixelPro.vivutrade.io.vn/projects/${foundProject.slug}`
+        "image": `https://pixelpro.vivutrade.io.vn${foundProject.image}`,
+        "url": `https://pixelpro.vivutrade.io.vn/projects/${foundProject.slug}`
       };
       
       script.text = JSON.stringify(projectSchema);

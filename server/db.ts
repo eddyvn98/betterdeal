@@ -8,9 +8,14 @@ fs.mkdirSync(dataDir, { recursive: true });
 const dbPath = path.join(dataDir, 'leads.sqlite');
 export const db = new DatabaseSync(dbPath);
 
-db.exec(`
-  PRAGMA journal_mode = WAL;
+try {
+  db.exec(`PRAGMA journal_mode = WAL;`);
+} catch {
+  // Fallback for host-mounted volumes that do not support WAL reliably.
+  db.exec(`PRAGMA journal_mode = DELETE;`);
+}
 
+db.exec(`
   CREATE TABLE IF NOT EXISTS sessions (
     id TEXT PRIMARY KEY,
     created_at TEXT NOT NULL,
