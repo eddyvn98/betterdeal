@@ -51,9 +51,9 @@ export const ProjectsPage = ({
               key={cat}
               onClick={() => setFilter(cat)}
               className={cn(
-                'rounded-full px-4 py-2 text-sm font-medium transition-all',
+                'rounded-full px-5 py-2.5 text-sm font-bold transition-all md:text-base',
                 filter === cat
-                  ? 'bg-slate-900 text-white shadow-md'
+                  ? 'bg-slate-900 text-white shadow-lg'
                   : 'border border-slate-200 bg-white text-slate-500 hover:border-emerald-300 hover:text-slate-900',
               )}
             >

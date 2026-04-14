@@ -9,7 +9,7 @@ export const telefilmDeliveryPipeline: Project = {
   categoryEn: 'Automation',
   stack: ['Python', 'Telethon', 'Pipeline Architecture', 'Content UX'],
   stars: 0,
-  image: '/mockups/telefilm-telegram-pipeline.webp',
+  image: '/mockups/telefilm-telegram-pipeline.png',
   description: 'Hệ thống tự động hóa khép kín giúp quản trị viên điều hành kho nội dung số một cách thảnh thơi và chính xác.',
   descriptionEn: 'An end-to-end automation system helping admins manage digital content repositories effortlessly and accurately.',
   longDescription:

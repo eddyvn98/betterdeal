@@ -8,7 +8,7 @@ export const tradingAppAuto: Project = {
   category: 'Trading',
   stack: ['C#', '.NET', 'Quant Logic', 'Automation'],
   stars: 0,
-  image: '/mockups/autotrade-quant.webp',
+  image: '/mockups/autotrade-quant.png',
   description: 'Hệ thống giao dịch tự động hóa quy trình quản lý rủi ro và thực thi lệnh chính xác.',
   descriptionEn: 'An automated trading system for precise risk management and order execution.',
   longDescription:

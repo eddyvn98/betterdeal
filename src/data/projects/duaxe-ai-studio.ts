@@ -8,7 +8,7 @@ export const duaxeAiStudio: Project = {
   category: 'Game',
   stack: ['AI Training', 'Neural Networks', 'SimulationUI', 'JavaScript'],
   stars: 0,
-  image: '/mockups/driveai-studio.webp',
+  image: '/mockups/driveai-studio.png',
   description: 'Môi trường mô phỏng huấn luyện AI lái xe tự hành với giao diện tương tác trực quan.',
   descriptionEn: 'A simulation environment for training self-driving AI with an interactive visual interface.',
   longDescription:

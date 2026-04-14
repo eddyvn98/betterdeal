@@ -25,6 +25,17 @@ export const Footer = () => {
             <p className="text-sm leading-relaxed text-slate-500 max-w-xs">
               {t('footer.tagline')}
             </p>
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://github.com/eddyvn98" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center gap-2 text-slate-400 transition-colors hover:text-slate-900"
+              >
+                <Github size={18} />
+                <span className="text-sm font-semibold">GitHub</span>
+              </a>
+            </div>
           </div>
 
           {/* Column 2: Quick Links */}

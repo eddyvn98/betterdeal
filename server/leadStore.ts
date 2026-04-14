@@ -22,8 +22,10 @@ const emptyLead: LeadQualification = {
   confidence: 'low',
   dealStage: 'discovery',
   readyToHandoff: false,
-  isSharedExperience: false,
   adminSummary: '',
+  isSharedExperience: false,
+  redeemedVoucherCode: '',
+  appliedDiscount: 0,
 };
 
 const parseJsonArray = (value: string): string[] => {
@@ -97,6 +99,8 @@ export const getLead = (sessionId: string): LeadQualification => {
     readyToHandoff: Boolean(row.ready_to_handoff),
     isSharedExperience: Boolean(row.is_shared_experience),
     adminSummary: String(row.admin_summary ?? ''),
+    redeemedVoucherCode: String(row.redeemed_voucher_code ?? ''),
+    appliedDiscount: Number(row.applied_discount ?? 0),
   };
 };
 
@@ -125,6 +129,8 @@ export const upsertLead = (sessionId: string, lead: LeadQualification) => {
       ready_to_handoff = ?,
       is_shared_experience = ?,
       admin_summary = ?,
+      redeemed_voucher_code = ?,
+      applied_discount = ?,
       updated_at = ?
     WHERE session_id = ?
   `).run(
@@ -147,8 +153,10 @@ export const upsertLead = (sessionId: string, lead: LeadQualification) => {
     lead.confidence,
     lead.dealStage,
     lead.readyToHandoff ? 1 : 0,
-    (lead as any).isSharedExperience ? 1 : 0,
+    lead.isSharedExperience ? 1 : 0,
     lead.adminSummary,
+    lead.redeemedVoucherCode,
+    lead.appliedDiscount,
     now,
     sessionId,
   );

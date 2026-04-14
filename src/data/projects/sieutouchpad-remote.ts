@@ -9,7 +9,7 @@ export const sieutouchpadRemote: Project = {
   categoryEn: 'Mobile',
   stack: ['Kotlin', 'Android SDK', 'Low-level Networking', 'Mobile Interaction'],
   stars: 0,
-  image: '/mockups/sieutouchpad-mobile-remote.webp',
+  image: '/mockups/sieutouchpad-mobile-remote.png',
   description: 'Ứng dụng Android tối ưu hóa sự kết nối giữa con người và máy tính thông qua các tương tác chạm tinh tế.',
   descriptionEn: 'An Android app optimizing human-compute connectivity through refined touch interactions.',
   longDescription:

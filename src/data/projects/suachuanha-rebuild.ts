@@ -8,7 +8,7 @@ export const suachuanhaRebuild: Project = {
   category: 'Commerce',
   stack: ['React', 'SEO Optimization', 'Conversion focus', 'UI/UX'],
   stars: 0,
-  image: '/mockups/serviceweb-rebuild.webp',
+  image: '/mockups/serviceweb-rebuild.png',
   description: 'Nền tảng giới thiệu dịch vụ chuyên nghiệp tập trung vào việc tạo sự tin tưởng và chuyển đổi khách hàng.',
   descriptionEn: 'A professional service platform focused on building trust and customer conversion.',
   longDescription:

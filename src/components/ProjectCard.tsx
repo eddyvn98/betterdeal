@@ -30,12 +30,13 @@ export const ProjectCard = ({ project, onAiAnalysis, loading, aiInfo }: ProjectC
       viewport={{ once: true }}
       whileHover={{ y: -8, transition: { duration: 0.28, ease: 'easeOut' } }}
       onClick={() => navigate(`/projects/${project.slug}`)}
-      className="group relative cursor-pointer overflow-hidden rounded-[28px] border border-slate-200 bg-white transition-all duration-300 hover:border-emerald-400/50 hover:shadow-2xl hover:shadow-emerald-100"
+      className="group relative cursor-pointer overflow-hidden rounded-[28px] border border-slate-200 bg-white transition-all duration-300 hover:border-emerald-400/50 hover:shadow-[0_20px_50px_rgba(16,185,129,0.12)]"
+      aria-label={`${isEn ? 'View details for' : 'Xem chi tiết'} ${title}`}
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
         <img
           src={project.image}
-          alt={title}
+          alt={`Screenshot of ${title} project`}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           referrerPolicy="no-referrer"
@@ -57,6 +58,7 @@ export const ProjectCard = ({ project, onAiAnalysis, loading, aiInfo }: ProjectC
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            aria-label={`${isEn ? 'Start AI analysis for' : 'Bắt đầu phân tích AI cho'} ${title}`}
             onClick={(e) => {
               e.stopPropagation();
               onAiAnalysis(project);

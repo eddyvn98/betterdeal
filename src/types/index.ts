@@ -1,3 +1,13 @@
+export interface TechnicalDeepDive {
+  architecture?: string;
+  architectureEn?: string;
+  coreChallenges?: string;
+  coreChallengesEn?: string;
+  optimization?: string;
+  optimizationEn?: string;
+  diagram?: string; // Mermaid diagram
+}
+
 export interface Project {
   id: number;
   slug: string;
@@ -22,6 +32,7 @@ export interface Project {
   liveUrl?: string;
   year?: string;
   featured?: boolean;
+  deepDive?: TechnicalDeepDive;
 }
 
 export interface Message {
@@ -55,8 +66,9 @@ export interface LeadQualification {
   dealStage: 'discovery' | 'qualified' | 'quoted' | 'won';
   readyToHandoff: boolean;
   adminSummary: string;
-  redeemedVoucherCode?: string;
-  appliedDiscount?: number;
+  isSharedExperience: boolean;
+  redeemedVoucherCode: string;
+  appliedDiscount: number;
 }
 
 export interface ChallengeAIResponse {

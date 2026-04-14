@@ -12,7 +12,11 @@ import {
   Github,
   Calendar,
   Layers,
-  ExternalLink
+  ExternalLink,
+  Terminal,
+  Cpu,
+  Workflow,
+  Code2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
@@ -35,10 +39,64 @@ export const ProjectDetailPage = () => {
     if (foundProject) {
       setProject(foundProject);
       window.scrollTo(0, 0);
+
+      // Dynamic SEO Updates
+      const projectTitle = `${(isEn && foundProject.titleEn) ? foundProject.titleEn : foundProject.title} | Portfolio - PixelPro`;
+      const projectDesc = (isEn && foundProject.descriptionEn) ? foundProject.descriptionEn : foundProject.description;
+      
+      document.title = projectTitle;
+      
+      // Update meta description
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', projectDesc);
+      
+      // Update OG tags
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', projectTitle);
+      
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', projectDesc);
+
+      const ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage) ogImage.setAttribute('content', foundProject.image);
+
+      // Inject Project JSON-LD
+      const schemaId = 'project-schema-ld';
+      let script = document.getElementById(schemaId) as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement('script');
+        script.id = schemaId;
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+
+      const projectSchema = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": foundProject.title,
+        "description": foundProject.description,
+        "applicationCategory": foundProject.category,
+        "operatingSystem": "Web",
+        "author": {
+          "@type": "Person",
+          "name": "PixelPro"
+        },
+        "image": `https://PixelPro.vivutrade.io.vn${foundProject.image}`,
+        "url": `https://PixelPro.vivutrade.io.vn/projects/${foundProject.slug}`
+      };
+      
+      script.text = JSON.stringify(projectSchema);
+
     } else {
       navigate('/projects');
     }
-  }, [slug, navigate]);
+
+    // Cleanup to revert to default if needed (optional but good practice)
+    return () => {
+      const script = document.getElementById('project-schema-ld');
+      if (script) script.remove();
+    };
+  }, [slug, navigate, isEn]);
 
   if (!project) return null;
 
@@ -154,14 +212,10 @@ export const ProjectDetailPage = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="lg:col-span-2 grid grid-cols-1 gap-8">
               <div className="p-8 rounded-[32px] bg-white border border-slate-200 shadow-sm">
-                <div className="text-3xl font-extrabold text-slate-900 mb-2">2026</div>
+                <div className="text-3xl font-extrabold text-slate-900 mb-2">{project.year || '2026'}</div>
                 <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">{isEn ? 'Completed' : 'Hoàn thành'}</div>
-              </div>
-              <div className="p-8 rounded-[32px] bg-white border border-slate-200 shadow-sm">
-                <div className="text-3xl font-extrabold text-slate-900 mb-2">{project.stars || '0'}</div>
-                <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">{isEn ? 'Efficiency Score' : 'Điểm hiệu quả'}</div>
               </div>
             </div>
           </div>
@@ -218,49 +272,82 @@ export const ProjectDetailPage = () => {
               </p>
             </motion.div>
           )}
+
+          {project.deepDive && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-32 pt-32 border-t border-slate-100"
+            >
+              <div className="flex flex-col items-center text-center mb-16">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-slate-100 text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
+                  <Terminal size={12} />
+                  Engineering Logs
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6">
+                  {isEn ? 'Technical Deep-dive' : 'Phân tích kỹ thuật chuyên sâu'}
+                </h2>
+                <p className="text-slate-500 max-w-2xl mx-auto">
+                  {isEn 
+                    ? "A detailed look under the hood at the architecture, engineering challenges, and optimization strategies." 
+                    : "Cái nhìn chi tiết về kiến trúc, các thách thức kỹ thuật và chiến lược tối ưu hóa hệ thống."}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Architecture */}
+                <div className="p-10 rounded-[40px] bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
+                  <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-emerald-600 mb-8 group-hover:scale-110 transition-transform">
+                    <Workflow size={28} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{isEn ? 'System Architecture' : 'Kiến trúc hệ thống'}</h3>
+                  <div className="prose prose-slate prose-lg max-w-none text-slate-600 font-medium leading-relaxed">
+                    <ReactMarkdown>{isEn ? project.deepDive.architectureEn || '' : project.deepDive.architecture || ''}</ReactMarkdown>
+                  </div>
+                </div>
+
+                {/* Core Challenges */}
+                <div className="p-10 rounded-[40px] bg-slate-900 text-white border border-slate-800 hover:border-red-500/30 transition-colors group">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-red-400 mb-8 group-hover:scale-110 transition-transform">
+                    <Cpu size={28} />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4">{isEn ? 'Engineering Challenges' : 'Thách thức kỹ thuật'}</h3>
+                  <div className="prose prose-invert prose-lg max-w-none text-slate-300 font-medium leading-relaxed">
+                    <ReactMarkdown>{isEn ? project.deepDive.coreChallengesEn || '' : project.deepDive.coreChallenges || ''}</ReactMarkdown>
+                  </div>
+                </div>
+
+                {/* Optimization - Full Width */}
+                <div className="md:col-span-2 p-10 rounded-[40px] bg-emerald-600 text-white relative overflow-hidden group">
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-8">
+                      <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-100 group-hover:scale-110 transition-transform">
+                        <Zap size={28} />
+                      </div>
+                      <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-emerald-100 border border-white/10">
+                        Performance Focus
+                      </div>
+                    </div>
+                    <h3 className="text-3xl font-black mb-6">{isEn ? 'The 0.1ms Optimization' : 'Tối ưu hóa hiệu năng cực hạn'}</h3>
+                    <div className="prose prose-invert prose-xl max-w-none text-emerald-50 leading-relaxed">
+                      <ReactMarkdown>{isEn ? project.deepDive.optimizationEn || '' : project.deepDive.optimization || ''}</ReactMarkdown>
+                    </div>
+                  </div>
+                  
+                  {/* Decor */}
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-[100px] -mr-40 -mt-40" />
+                  <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full blur-[100px] -ml-40 -mb-40" />
+                  <Code2 size={300} className="absolute bottom-[-100px] right-[-50px] opacity-10 rotate-12 pointer-events-none" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
         </div>
       </section>
 
-      {/* Emdash AI Insight Section */}
-      <section className="container mx-auto px-4 mb-20">
-        <div className="max-w-5xl mx-auto p-12 rounded-[48px] bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden shadow-3xl">
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                <Bot className="text-emerald-400" />
-              </div>
-              <div>
-                <div className="text-xs font-bold uppercase tracking-[0.3em] text-emerald-400">Emdash AI Agent</div>
-                <div className="text-xl font-bold leading-tight">{t('project_modal.ai_hint_role')}</div>
-              </div>
-            </div>
 
-            <div className="text-xl text-emerald-50/90 leading-relaxed font-medium max-w-3xl mb-4">
-              <ReactMarkdown>
-                {t('project_modal.ai_hint_long', { title })}
-              </ReactMarkdown>
-            </div>
-
-            <p className="text-xs text-emerald-500/50 italic mb-8">
-              {isEn
-                ? "* This analysis is automatically generated by PixelPro's internal AI agent based on project metadata."
-                : "* Phân tích này được tạo tự động bởi AI Agent của PixelPro dựa trên dữ liệu đặc tả của dự án."}
-            </p>
-
-            <div className="mt-12 flex items-center gap-4">
-              <button className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-400 transition-colors">
-                {isEn ? 'Hire for similar project' : 'Tư vấn dự án tương tự'}
-              </button>
-            </div>
-          </div>
-
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] -mr-48 -mt-48" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -ml-48 -mb-48" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
-            <Bot size={400} />
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 text-center">

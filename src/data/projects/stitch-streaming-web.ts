@@ -9,7 +9,7 @@ export const stitchStreamingWeb: Project = {
   categoryEn: 'Media',
   stack: ['React', 'HLS.js', 'Metadata Engine', 'Cinema UX'],
   stars: 0,
-  image: '/mockups/stitch-streaming-ui.webp',
+  image: '/mockups/stitch-streaming-ui.png',
   description: 'Nền tảng giải trí cá nhân tập trung vào sự tinh tế trong cách thưởng thức và quản lý nội dung.',
   descriptionEn: 'A personal entertainment platform focusing on refined content consumption and management.',
   longDescription:

@@ -6,9 +6,9 @@
   },
   "hero": {
     "badge": "Work Smarter",
-    "title_main": "Better Deals",
-    "title_span": "via AI powered chat",
-    "description": "Direct communication, instant quotes. My AI helps break down requirements and propose the best solution for both cost and time. Experience the difference now!",
+    "title_main": "Supreme Deals",
+    "title_span": "via Elite AI consultation",
+    "description": "Legendary direct communication, instant quotes. Our world-class AI breaks down complex requirements to propose unrivaled solutions for both cost and time. Experience elite engineering now!",
     "view_projects": "View Sample Projects",
     "chat_now": "Chat with AI",
     "status_calculating": "Calculating quote...",
@@ -111,7 +111,7 @@
     "overview": "Project Overview",
     "stack": "Technical Stack",
     "ai_hint": "Click the AI button on the card to generate analysis for this project.",
-    "ai_hint_long": "Based on source code and architecture analysis, the **{{title}}** system demonstrates exceptional optimization in handling complex constraints. The Emdash AI model identifies this as a prime case study for balancing pragmatism with technical performance.",
+    "ai_hint_long": "Based on world-class source code and elite architecture analysis, the **{{title}}** system demonstrates industry-leading optimization. The Emdash AI model identifies this as a supreme case study for technical mastery and unrivaled performance.",
     "ai_hint_role": "AI Technical Analysis"
   },
   "footer": {
@@ -146,7 +146,7 @@
       "a": "Yes. For complex projects, I can develop a Demo/PoC (Proof of Concept) with a small deposit, helping you verify the solution's effectiveness before committing to the full scope."
     }
   },
-  "site_title": "PixelPro | Better Deal • Premium AI Partner",
+  "site_title": "PixelPro | Better Deal • Supreme AI Partner & Elite Engineering",
   "game": {
     "title": "Flappy Discount",
     "turns_left": "Turns left",

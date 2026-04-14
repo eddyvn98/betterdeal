@@ -8,7 +8,7 @@ export const androidKeyboardRemote: Project = {
   category: 'Mobile',
   stack: ['Kotlin', 'Android SDK', 'Input Management', 'System hooks'],
   stars: 0,
-  image: '/mockups/droidinput-keyboard.webp',
+  image: '/mockups/droidinput-keyboard.png',
   description: 'Công cụ điều khiển và nhập liệu thông minh trên Android tập trung vào sự chính xác và tốc độ phản hồi.',
   descriptionEn: 'A smart Android input and control tool focusing on precision and response speed.',
   longDescription:

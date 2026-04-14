@@ -8,7 +8,7 @@ export const giasuToan: Project = {
   category: 'Education',
   stack: ['JavaScript', 'Canvas API', 'Math Logic', 'UX for Kids'],
   stars: 0,
-  image: '/mockups/mathmaster-core.webp',
+  image: '/mockups/mathmaster-core.png',
   description: 'Công cụ hỗ trợ học toán tương tác giúp biến các con số khô khan thành những trải nghiệm thú vị.',
   descriptionEn: 'An interactive math tool turning dry numbers into exciting experiences.',
   longDescription:

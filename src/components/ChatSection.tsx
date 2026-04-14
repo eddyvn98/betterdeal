@@ -667,7 +667,7 @@ export const ChatSection = ({
               <p className="mt-2 text-slate-100">
                 {lead.contactName || lead.contactValue
                   ? [lead.contactName, lead.contactChannel, lead.contactValue].filter(Boolean).join(' • ')
-                  : (isVi ? 'Sẽ được cập nhật sau chat' : 'To be updated after chat')}
+                  : (isVi ? 'Đang chờ thông tin...' : 'Awaiting information...')}
               </p>
             </div>
 

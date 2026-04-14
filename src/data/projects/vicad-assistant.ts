@@ -8,7 +8,7 @@ export const vicadAssistant: Project = {
   category: 'Tooling',
   stack: ['AI Integration', 'Desktop App', 'Automation', 'User Productivity'],
   stars: 0,
-  image: '/mockups/vicad-ai-assistant.webp',
+  image: '/mockups/vicad-ai-assistant.png',
   description: 'Trợ lý ảo thông minh giúp tối ưu hóa tư duy thiết kế và tự động hóa các phân tích bản vẽ kỹ thuật.',
   descriptionEn: 'A smart virtual assistant optimizing design thinking and automating technical drawing analysis.',
   longDescription:

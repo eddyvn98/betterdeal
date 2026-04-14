@@ -8,7 +8,7 @@ export const chatmu: Project = {
   category: 'Communication',
   stack: ['TypeScript', 'UI Experiment', 'Accessibility', 'Modern Web'],
   stars: 0,
-  image: '/mockups/blindchat-experiment.webp',
+  image: '/mockups/blindchat-experiment.png',
   description: 'Thử nghiệm giao diện trò chuyện tối giản, khám phá các phương thức tương tác phi ngôn ngữ.',
   descriptionEn: 'An experimental minimal chat interface exploring non-verbal interaction methods.',
   longDescription:

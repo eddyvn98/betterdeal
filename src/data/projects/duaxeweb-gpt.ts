@@ -8,7 +8,7 @@ export const duaxewebGpt: Project = {
   category: 'Game',
   stack: ['JavaScript', 'Canvas API', 'Game Loop', 'Web Performance'],
   stars: 0,
-  image: '/mockups/webracer-gpt.webp',
+  image: '/mockups/webracer-gpt.png',
   description: 'Trò chơi đua xe nhẹ nhàng trên trình duyệt với cơ chế điều khiển tối giản và tốc độ tải cực nhanh.',
   descriptionEn: 'A lightweight browser racing game with minimal controls and ultra-fast loading speed.',
   longDescription:

@@ -1,4 +1,4 @@
-import { Tool } from '@google/genai';
+import { Tool, Type } from '@google/genai';
 
 /**
  * Hàm hỗ trợ trích xuất nội dung từ HTML thô
@@ -57,10 +57,10 @@ export const browsingTools: Tool[] = [
         name: "browse_url",
         description: "Fetches and returns the text content of a given URL. Use this tool when the user provides a link to a website (e.g., a competitor site, a reference site, or their current site) and you need to understand its content, design, or features to provide a better consultation or quote.",
         parameters: {
-          type: "object",
+          type: Type.OBJECT,
           properties: {
             url: {
-              type: "string",
+              type: Type.STRING,
               description: "The full URL of the website to browse (must include http:// or https://)."
             }
           },

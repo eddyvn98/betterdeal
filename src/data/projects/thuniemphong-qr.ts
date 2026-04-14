@@ -8,7 +8,7 @@ export const thuniemphongQr: Project = {
   category: 'Utility',
   stack: ['React Native', 'QR Encryption', 'Security', 'User Trust'],
   stars: 0,
-  image: '/mockups/qrsecure-seal.webp',
+  image: '/mockups/thuniemphong-qr.png',
   description: 'Công cụ tạo và xác thực mã seal bảo mật giúp minh bạch hóa quy trình vận chuyển và niêm phong.',
   descriptionEn: 'A secure seal generation and verification toolkit to transparentize transport and sealing processes.',
   longDescription:

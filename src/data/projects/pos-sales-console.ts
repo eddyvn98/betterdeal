@@ -9,7 +9,7 @@ export const posSalesConsole: Project = {
   categoryEn: 'Commerce',
   stack: ['JavaScript', 'IndexedDB', 'Service Workers', 'Retail UX'],
   stars: 0,
-  image: '/mockups/posweb-sales-console.webp',
+  image: '/mockups/posweb-sales-console.png',
   description: 'Hệ thống bán hàng tập trung vào sự liền mạch trong thao tác của nhân viên và niềm tin của khách hàng.',
   descriptionEn: 'A sales system focusing on staff workflow continuity and customer trust.',
   longDescription:

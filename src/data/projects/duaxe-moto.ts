@@ -8,7 +8,7 @@ export const duaxeMoto: Project = {
   category: 'Game',
   stack: ['C#', 'Physical Engine', 'Game Design', 'UX for Gamers'],
   stars: 0,
-  image: '/mockups/motopulse-racing.webp',
+  image: '/mockups/motopulse-racing.png',
   description: 'Trò chơi đua xe mô tô tập trung vào cảm giác vật lý chân thực và trải nghiệm tốc độ mượt mà.',
   descriptionEn: 'A motorcycle racing game focusing on authentic physics feel and smooth speed experience.',
   longDescription:

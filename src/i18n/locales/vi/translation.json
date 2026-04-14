@@ -6,9 +6,9 @@
   },
   "hero": {
     "badge": "Làm việc thông minh hơn",
-    "title_main": "Deal giá tốt hơn",
-    "title_span": "khi chat cùng AI",
-    "description": "Trao đổi thẳng thắn, nhận báo giá ngay lập tức. AI của tôi giúp bóc tách yêu cầu và đề xuất phương án tối ưu nhất về cả chi phí lẫn thời gian. Trải nghiệm ngay để thấy sự khác biệt!",
+    "title_main": "Deal hời nhất",
+    "title_span": "từ đối tác AI đẳng cấp",
+    "description": "Trao đổi thẳng thắn, nhận báo giá tức thì. Trợ lý AI thế giới giúp bóc tách yêu cầu và đề xuất giải pháp vượt trội nhất về cả chi phí lẫn thời gian. Trải nghiệm kỹ thuật Elite ngay hôm nay!",
     "view_projects": "Xem các dự án mẫu",
     "chat_now": "Chat với AI",
     "status_calculating": "Đang tính toán báo giá...",
@@ -111,7 +111,7 @@
     "overview": "Tổng quan dự án",
     "stack": "Công nghệ sử dụng",
     "ai_hint": "Nhấn nút AI ngoài danh sách để xem phân tích chi tiết cho dự án này.",
-    "ai_hint_long": "Dựa trên phân tích mã nguồn và kiến trúc, hệ thống **{{title}}** thể hiện sự tối ưu vượt trội trong việc xử lý các ràng buộc phức tạp. Mô hình Emdash AI đánh giá đây là một case study điển hình về việc kết hợp tính thực dụng và hiệu suất kỹ thuật.",
+    "ai_hint_long": "Dựa trên phân tích mã nguồn đẳng cấp thế giới và kiến trúc thượng tầng, hệ thống **{{title}}** thể hiện sự tối ưu hóa không đối thủ trong ngành. Mô hình Emdash AI đánh giá đây là một case study đỉnh cao về việc kết hợp kỹ thuật tinh hoa và hiệu suất cực hạn.",
     "ai_hint_role": "Phân tích Kỹ thuật từ AI"
   },
   "footer": {
@@ -146,7 +146,7 @@
       "a": "Có. Với các dự án phức tạp, tôi nhận triển khai bản Demo/PoC (Proof of Concept) với một khoản chi phí đặt cọc nhỏ để bạn kiểm chứng hiệu quả trước khi quyết định đi đường dài."
     }
   },
-  "site_title": "PixelPro | Better Deal • Đối tác AI cao cấp",
+  "site_title": "PixelPro | Better Deal • Đối tác AI đẳng cấp & Kỹ thuật Tinh hoa",
   "game": {
     "title": "Flappy Discount",
     "turns_left": "Lượt chơi còn lại",

@@ -9,7 +9,7 @@ export const tele2codexBridge: Project = {
   categoryEn: 'Automation',
   stack: ['Node.js', 'Telegram API', 'Automation', 'DevOps UX'],
   stars: 0,
-  image: '/mockups/tele2codex-bridge.webp',
+  image: '/mockups/tele2codex-bridge.png',
   description: 'Cầu nối tự động hóa giúp lập trình viên giảm bớt sự phân tâm và tối ưu hóa luồng giao tiếp kỹ thuật.',
   descriptionEn: 'An automation bridge helping developers reduce distraction and optimize technical communication flows.',
   longDescription:

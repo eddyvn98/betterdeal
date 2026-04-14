@@ -8,7 +8,7 @@ export const tradingPythonScript: Project = {
   category: 'Trading',
   stack: ['Python', 'Pandas', 'Technical Analysis', 'Financial Automation'],
   stars: 0,
-  image: '/mockups/scripttrade-python.webp',
+  image: '/mockups/scripttrade-python.png',
   description: 'Bộ công cụ phân tích kỹ thuật và tự động hóa chiến lược giao dịch tùy biến cao.',
   descriptionEn: 'A toolkit for technical analysis and highly customizable trading strategy automation.',
   longDescription:

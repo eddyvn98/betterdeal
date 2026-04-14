@@ -8,7 +8,7 @@ export const mywebfilmLocal: Project = {
   category: 'Media',
   stack: ['HTML5', 'CSS3', 'JavaScript', 'Media API'],
   stars: 0,
-  image: '/mockups/localstream-media.webp',
+  image: '/mockups/mywebfilm-local.png',
   description: 'Trình quản lý và phát phim cá nhân ưu tiên sự riêng tư và trải nghiệm duyệt phim tinh tế.',
   descriptionEn: 'A personal media manager prioritizing privacy and refined content discovery.',
   longDescription:

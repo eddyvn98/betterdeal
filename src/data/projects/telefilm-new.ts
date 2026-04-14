@@ -8,7 +8,7 @@ export const telefilmNew: Project = {
   category: 'Media',
   stack: ['TypeScript', 'Next.js', 'PostgreSQL', 'Cloud Infrastructure'],
   stars: 0,
-  image: '/mockups/telefilm-next-media.webp',
+  image: '/mockups/telefilm-next-media.png',
   description: 'Hệ sinh thái giải trí đa nền tảng thế hệ mới, tối ưu hóa sự liền mạch giữa các thiết bị.',
   descriptionEn: 'A next-gen multi-platform entertainment ecosystem optimizing cross-device continuity.',
   longDescription:

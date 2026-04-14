@@ -40,6 +40,9 @@ const emptyLead: LeadQualification = {
   dealStage: 'discovery',
   readyToHandoff: false,
   adminSummary: '',
+  isSharedExperience: false,
+  redeemedVoucherCode: '',
+  appliedDiscount: 0,
 };
 
 const storageKey = 'Emdash-portfolio-session-id';

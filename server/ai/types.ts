@@ -24,6 +24,7 @@ export const LeadQualificationSchema = z.object({
   adminSummary: z.string().default('').describe('Tóm tắt ngắn gọn cho admin về status của lead này'),
   redeemedVoucherCode: z.string().default('').describe('Mã voucher mà khách đã nhận được từ mini-game'),
   appliedDiscount: z.number().default(0).describe('Phần trăm giảm giá đã áp dụng (0-50)'),
+  isSharedExperience: z.boolean().default(false).describe('Đã được lưu vào bộ nhớ kinh nghiệm chia sẻ chưa'),
 });
 
 export const ChallengeAIResponseSchema = z.object({

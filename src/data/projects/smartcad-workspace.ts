@@ -8,7 +8,7 @@ export const smartcadWorkspace: Project = {
   category: 'Tooling',
   stack: ['TypeScript', 'Cloud Integration', 'Collaboration', 'UX'],
   stars: 0,
-  image: '/mockups/smartcad-workspace.webp',
+  image: '/mockups/smartcad-workspace.png',
   description: 'Không gian làm việc số tích hợp các công cụ chuyên dụng cho ngành thiết kế kỹ thuật.',
   descriptionEn: 'A digital workspace integrating specialized tools for the technical design industry.',
   longDescription:

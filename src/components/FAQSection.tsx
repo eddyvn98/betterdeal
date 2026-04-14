@@ -50,19 +50,24 @@ export const FAQSection = () => {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="flex w-full items-center justify-between p-6 text-left"
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-answer-${index}`}
+                className="flex w-full items-center justify-between p-6 text-left focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               >
                 <span className="text-lg font-semibold text-slate-900">
                   {t(faq.questionKey)}
                 </span>
                 {openIndex === index ? (
-                  <Minus className="h-5 w-5 text-emerald-600" />
+                  <Minus className="h-5 w-5 text-emerald-600" aria-hidden="true" />
                 ) : (
-                  <Plus className="h-5 w-5 text-slate-400" />
+                  <Plus className="h-5 w-5 text-slate-400" aria-hidden="true" />
                 )}
               </button>
               
               <motion.div
+                id={`faq-answer-${index}`}
+                role="region"
+                aria-label={t(faq.questionKey)}
                 initial={false}
                 animate={{ height: openIndex === index ? 'auto' : 0, opacity: openIndex === index ? 1 : 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}

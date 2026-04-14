@@ -8,7 +8,7 @@ export const duaxegptUnity: Project = {
   category: 'Game',
   stack: ['Unity', 'C#', 'AI Integration', 'Game Simulation'],
   stars: 0,
-  image: '/mockups/gptracer-unity.webp',
+  image: '/mockups/gptracer-unity.png',
   description: 'Bản demo mô phỏng đua xe tích hợp AI trên nền tảng Unity, thử nghiệm sự tương tác thông minh.',
   descriptionEn: 'A racing simulation demo integrated with AI on Unity, testing intelligent interaction.',
   longDescription:

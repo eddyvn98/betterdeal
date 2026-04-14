@@ -9,7 +9,7 @@ export const webRemoteTv: Project = {
   categoryEn: 'IoT',
   stack: ['HTML5', 'Modern JavaScript', 'IP Protocols', 'Cross-device UX'],
   stars: 0,
-  image: '/mockups/webremotetv-remote-panel.webp',
+  image: '/mockups/webremotetv-remote-panel.png',
   description: 'Giải pháp điều khiển Smart TV dựa trên trình duyệt, đặt sự tiện lợi và đơn giản lên hàng đầu.',
   descriptionEn: 'A browser-based Smart TV control solution putting convenience and simplicity first.',
   longDescription:

@@ -8,7 +8,7 @@ export const giaphaso: Project = {
   category: 'Web App',
   stack: ['TypeScript', 'React', 'D3.js', 'Heritage Tech'],
   stars: 0,
-  image: '/mockups/giaphaso-heritage.webp',
+  image: '/mockups/giaphaso-heritage.png',
   description: 'Nền tảng số hóa cây gia phả với giao diện trực quan và trải nghiệm kết nối thế hệ.',
   descriptionEn: 'A digital lineage platform with intuitive visualization and generational connection experience.',
   longDescription:

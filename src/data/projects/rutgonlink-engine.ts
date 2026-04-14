@@ -8,7 +8,7 @@ export const rutgonlinkEngine: Project = {
   category: 'Utility',
   stack: ['JavaScript', 'Node.js', 'Redis', 'Performance'],
   stars: 0,
-  image: '/mockups/linksharp-engine.webp',
+  image: '/mockups/rutgonlink-engine.png',
   description: 'Hệ thống rút gọn liên kết tập trung vào tốc độ chuyển hướng và trải nghiệm người dùng không gián đoạn.',
   descriptionEn: 'A URL shortener focused on redirection speed and seamless user experience.',
   longDescription:

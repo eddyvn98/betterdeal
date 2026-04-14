@@ -8,7 +8,7 @@ export const vetoanhinhPrototype: Project = {
   category: 'Education',
   stack: ['SVG', 'Math algorithms', 'Interactive UI', 'Visualization'],
   stars: 0,
-  image: '/mockups/mathvisual-geometry.webp',
+  image: '/mockups/mathvisual-geometry.png',
   description: 'Nguyên mẫu công cụ mô phỏng hình học giúp trực quan hóa các định lý và không gian ba chiều.',
   descriptionEn: 'A geometry simulation prototype visualizing theorems and 3D space.',
   longDescription:

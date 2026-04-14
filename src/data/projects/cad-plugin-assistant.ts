@@ -8,7 +8,7 @@ export const cadPluginAssistant: Project = {
   category: 'Tooling',
   stack: ['C#', '.NET', 'AutoCAD API', 'Automation'],
   stars: 0,
-  image: '/mockups/cadmaster-plugin.webp',
+  image: '/mockups/cadmaster-plugin.png',
   description: 'Trình cắm hỗ trợ thiết kế giúp giảm thiểu các thao tác lặp lại và tối ưu hóa quy trình vẽ kỹ thuật.',
   descriptionEn: 'A design plugin that minimizes repetitive tasks and optimizes technical drafting workflows.',
   longDescription:

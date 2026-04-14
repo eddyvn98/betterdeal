@@ -51,6 +51,8 @@ db.exec(`
     is_shared_experience INTEGER NOT NULL DEFAULT 0,
     experience_embedding TEXT, --- JSON string of vector
     admin_summary TEXT NOT NULL DEFAULT '',
+    redeemed_voucher_code TEXT NOT NULL DEFAULT '',
+    applied_discount INTEGER NOT NULL DEFAULT 0,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (session_id) REFERENCES sessions(id)
   );
@@ -62,11 +64,20 @@ try {
   const hasSharedExp = tableInfo.some(col => col.name === 'is_shared_experience');
   const hasEmbedding = tableInfo.some(col => col.name === 'experience_embedding');
 
+  const hasVoucher = tableInfo.some(col => col.name === 'redeemed_voucher_code');
+  const hasDiscount = tableInfo.some(col => col.name === 'applied_discount');
+
   if (!hasSharedExp) {
     db.exec("ALTER TABLE leads ADD COLUMN is_shared_experience INTEGER NOT NULL DEFAULT 0");
   }
   if (!hasEmbedding) {
     db.exec("ALTER TABLE leads ADD COLUMN experience_embedding TEXT");
+  }
+  if (!hasVoucher) {
+    db.exec("ALTER TABLE leads ADD COLUMN redeemed_voucher_code TEXT NOT NULL DEFAULT ''");
+  }
+  if (!hasDiscount) {
+    db.exec("ALTER TABLE leads ADD COLUMN applied_discount INTEGER NOT NULL DEFAULT 0");
   }
 
   const msgTableInfo = db.prepare("PRAGMA table_info(messages)").all() as any[];

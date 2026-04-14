@@ -9,7 +9,7 @@ export const discordvipGateway: Project = {
   categoryEn: 'Community',
   stack: ['TypeScript', 'Discord.js', 'PostgreSQL', 'Membership UX'],
   stars: 0,
-  image: '/mockups/discordvip-gateway.webp',
+  image: '/mockups/discordvip-gateway.png',
   description: 'Hạ tầng quản trị cộng đồng tập trung vào sự công bằng và trải nghiệm tham gia liền mạch của thành viên.',
   descriptionEn: 'Community management infrastructure focusing on fairness and seamless member onboarding.',
   longDescription:

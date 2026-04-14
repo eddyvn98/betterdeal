@@ -8,7 +8,7 @@ export const giasuOnline: Project = {
   category: 'Education',
   stack: ['React', 'WebRTC', 'Real-time UI', 'Education Tech'],
   stars: 0,
-  image: '/mockups/educonnect-hub.webp',
+  image: '/mockups/educonnect-hub.png',
   description: 'Nền tảng kết nối giáo dục trực tuyến tập trung vào sự tương tác và cảm hứng học tập từ xa.',
   descriptionEn: 'An online education connecting platform focusing on interaction and remote learning inspiration.',
   longDescription:

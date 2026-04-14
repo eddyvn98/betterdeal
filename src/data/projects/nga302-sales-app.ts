@@ -8,7 +8,7 @@ export const nga302SalesApp: Project = {
   category: 'Commerce',
   stack: ['Kotlin', 'AI Lead Gen', 'Mobile UI', 'Business Automation'],
   stars: 0,
-  image: '/mockups/nga302-sales.webp',
+  image: '/mockups/nga302-sales.png',
   description: 'Ứng dụng hỗ trợ bán hàng di động tích hợp AI giúp tối ưu hóa quy trình tư vấn và quản lý đơn hàng.',
   descriptionEn: 'An AI-powered mobile sales app optimizing consultation and order management workflows.',
   longDescription:

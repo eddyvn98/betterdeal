@@ -93,7 +93,7 @@ app.post('/api/chat', async (req, res) => {
       const parts = response.candidates[0].content.parts;
       const functionCalls = parts.filter(p => p.functionCall);
       
-      contents.push(response.candidates[0].content);
+      contents.push({ role: 'model', parts: response.candidates[0].content.parts as any });
 
       const responseParts = [];
       for (const call of functionCalls) {

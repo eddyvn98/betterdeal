@@ -8,7 +8,7 @@ export const meomap: Project = {
   category: 'Map',
   stack: ['JavaScript', 'Leaflet', 'GeoJSON', 'Data Visualization'],
   stars: 0,
-  image: '/mockups/meomap-spatial.webp',
+  image: '/mockups/meomap.png',
   description: 'Công cụ trực quan hóa dữ liệu bản đồ thông báo với khả năng tìm kiếm và lọc dữ liệu thông minh.',
   descriptionEn: 'A map data visualization tool with smart search and data filtering capabilities.',
   longDescription:
