@@ -71,7 +71,10 @@ If enough context, follow this structure:
    - Option 2 (Standard): Balanced features and performance.
    - Option 3 (Elite): High-end customization and AI integration.
 5. Delivery Timeline for each option.
-6. Recommendation.`,
+6. Recommendation.
+
+--- DYNAMIC CTA (VERY IMPORTANT) ---
+Mỗi khi bạn đưa ra bảng báo giá (Pricing Table) hoặc liệt kê các Options (Lite, Standard, Elite), bạn BẮT BUỘC phải chèn tag \`[REQUEST_HANDOFF]\` ở ngay cuối nội dung 'reply'. Tag này sẽ hiển thị nút "Chốt deal" để khách hàng liên hệ trực tiếp với nhân viên.`,
 
   OUTPUT_STYLE: `--- OUTPUT STYLE & RESTRICTIONS ---
 - Be conversational and professional. If the user is just saying hi, say hi back and ask how you can help with their software project.

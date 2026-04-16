@@ -5,11 +5,34 @@ import { fileURLToPath } from 'url';
 import { ai, buildDynamicContext, buildMessageContents, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
 import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperience, generateEmbedding } from './ai/knowledge';
 import { browsingTools, browse_url } from './ai/tools';
-import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding } from './leadStore';
-import { notifyAdmin } from './notifier';
+import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding, getAllLeads } from './leadStore';
+import { notifyAdmin, setupBotMenu } from './notifier';
 import { handleExternalQuote } from './externalHandlers';
+import crypto from 'node:crypto';
+import { leadToMarkdown } from './ai/formatter';
+import { createOrder, getOrder, getOrderBySession, updateOrderStatus, updateOrderPriority, getAllOrders, getQueue, getPublicQueue, OrderStatus } from './orderService';
+import { processPaymentWebhook, verifySepaySignature, getAllPayments } from './paymentService';
 
 const app = express();
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'fallback';
+
+// Helper to verify admin token
+const verifyAdminAuth = (auth: string, sessionId?: string) => {
+  if (!auth) return false;
+  
+  // 1. Check if it's the Master Admin token (Used by the global dashboard)
+  const masterToken = crypto.createHmac('sha256', ADMIN_SECRET).update('MASTER_ADMIN').digest('hex');
+  if (auth === masterToken) return true;
+
+  // 2. Check if it's a session-specific token (Used by direct links from Telegram)
+  if (sessionId) {
+    const expected = crypto.createHmac('sha256', ADMIN_SECRET).update(sessionId).digest('hex');
+    return auth === expected;
+  }
+  
+  return false;
+};
+
 app.use(express.json({ limit: '10mb' }));
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +58,122 @@ app.get('/api/sessions/:sessionId', (req, res) => {
     lead: getLead(sessionId),
     adminStatus: getAdminStatus(sessionId),
   });
+});
+
+// --- ADMIN API ---
+
+app.get('/api/admin/verify', (req, res) => {
+  const { auth, sessionId } = req.query;
+  if (verifyAdminAuth(String(auth), sessionId ? String(sessionId) : undefined)) {
+    return res.json({ ok: true });
+  }
+  return res.status(401).json({ error: 'Unauthorized' });
+});
+
+app.get('/api/admin/leads', (req, res) => {
+  const { auth } = req.query;
+  if (!verifyAdminAuth(String(auth))) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const leads = getAllLeads();
+  return res.json(leads);
+});
+
+app.get('/api/admin/leads/:id', (req, res) => {
+  const { id } = req.params;
+  const { auth } = req.query;
+  
+  if (!verifyAdminAuth(String(auth), id)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!ensureSession(id)) return res.status(404).json({ error: 'Lead not found' });
+
+  const lead = getLead(id);
+  const messages = getMessages(id);
+  const markdown = leadToMarkdown(lead, id);
+
+  return res.json({
+    lead,
+    messages,
+    markdown
+  });
+});
+
+// --- ORDER & PAYMENT API ---
+
+app.get('/api/orders/queue', (req, res) => {
+  const queue = getQueue();
+  // Map to public view (hide sensitive info if needed)
+  const publicQueue = queue.map((o, idx) => ({
+    position: idx + 1,
+    projectSummary: o.projectSummary,
+    status: o.status,
+    paidAmount: o.paidAmount,
+    totalAmount: o.totalAmount,
+    createdAt: o.createdAt
+  }));
+  res.json(publicQueue);
+});
+
+app.get('/api/orders/:ticket', (req, res) => {
+  const { ticket } = req.params;
+  const order = getOrder(ticket);
+  if (!order) return res.status(404).json({ error: 'Order not found' });
+  
+  const publicQueueData = getPublicQueue(ticket);
+  
+  res.json({
+    ...order,
+    publicQueue: publicQueueData.items,
+    fomoMessages: publicQueueData.fomoMessages,
+    upsellSuggestion: publicQueueData.upsellSuggestion,
+    totalInQueue: publicQueueData.totalInQueue
+  });
+});
+
+app.post('/api/webhooks/sepay', async (req, res) => {
+  const signature = req.header('x-sepay-signature') || req.header('x-signature') || null;
+  const secret = process.env.SEPAY_WEBHOOK_SECRET || '';
+  
+  // Verify signature if secret is provided
+  if (secret && !verifySepaySignature(JSON.stringify(req.body), secret, signature)) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+
+  try {
+    const result = await processPaymentWebhook(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(400).json({ error: 'Webhook failed' });
+  }
+});
+
+app.get('/api/admin/orders', (req, res) => {
+  const { auth } = req.query;
+  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
+  res.json(getAllOrders());
+});
+
+app.get('/api/admin/payments', (req, res) => {
+  const { auth } = req.query;
+  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
+  res.json(getAllPayments());
+});
+
+app.patch('/api/admin/orders/:id', (req, res) => {
+  const { id } = req.params;
+  const { auth } = req.query;
+  const { status, progressStep, manualPriorityScore } = req.body;
+
+  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
+
+  if (status) updateOrderStatus(id, status as OrderStatus, progressStep);
+  if (manualPriorityScore !== undefined) updateOrderPriority(id, Number(manualPriorityScore));
+  
+  res.json({ ok: true });
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -169,9 +308,14 @@ app.post('/api/chat', async (req, res) => {
     addMessage(sessionId, 'model', parsed.reply);
     upsertLead(sessionId, parsed.lead);
 
-    if (parsed.lead.readyToHandoff) {
+    // Logic bàn giao cho Admin (Handoff)
+    const currentAdminStatus = getAdminStatus(sessionId);
+    const hasContact = !!parsed.lead.contactValue;
+    const isNewContact = hasContact && (currentAdminStatus === 'idle' || currentAdminStatus === 'failed');
+    
+    if (parsed.lead.readyToHandoff || isNewContact) {
       // Tự động lưu bộ nhớ kinh nghiệm khi chốt deal (chỉ lưu tóm tắt kỹ thuật, ẩn thông tin cá nhân)
-      if (!currentLead.readyToHandoff) {
+      if (parsed.lead.readyToHandoff && !currentLead.readyToHandoff) {
         console.log(`[${new Date().toLocaleTimeString()}] [SYSTEM] Learning from successful deal (Session: ${sessionId})...`);
         generateEmbedding(parsed.lead.projectSummary)
           .then(embedding => {
@@ -192,11 +336,30 @@ app.post('/api/chat', async (req, res) => {
       }
     }
 
+    // Check for deal closure and generate Order
+    let order = null;
+    if (parsed.lead.dealStage === 'closed' || (parsed.lead.readyToHandoff && parsed.lead.estimatedQuote)) {
+      const existingOrder = getOrderBySession(sessionId);
+      if (!existingOrder) {
+        // Parse quote to number
+        const amountStr = parsed.lead.estimatedQuote.replace(/[^0-9]/g, '');
+        const amount = parseInt(amountStr) || 0;
+        
+        if (amount > 0) {
+          order = createOrder(sessionId, parsed.lead.projectSummary, amount);
+          console.log(`[${new Date().toLocaleTimeString()}] [SYSTEM] Order created automatically: ${order.id} for session ${sessionId}`);
+        }
+      } else {
+        order = existingOrder;
+      }
+    }
+
     return res.json({
       sessionId,
       message: { role: 'model', content: parsed.reply },
       lead: parsed.lead,
       adminStatus: getAdminStatus(sessionId),
+      order: order ? { id: order.id, status: order.status } : null
     });
   } catch (error) {
     console.error('AI Processing Error:', error);
@@ -224,4 +387,6 @@ app.get('*', (req, res) => {
 const port = Number(process.env.API_PORT || 8787);
 app.listen(port, () => {
   console.log('API server running on http://localhost:' + port);
+  // Tự động setup nút Menu cho bot Telegram khi khởi động
+  setupBotMenu().catch(err => console.error('Failed to setup bot menu:', err));
 });

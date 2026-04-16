@@ -25,7 +25,7 @@ export const Capabilities = () => {
   const { t } = useTranslation();
 
   return (
-    <section id="capabilities" className="relative scroll-mt-24 bg-slate-50/50 px-6 py-24 overflow-hidden">
+    <section id="capabilities" className="relative scroll-mt-24 bg-slate-50/50 px-4 md:px-6 py-24 overflow-hidden">
       <CapabilitiesBackground />
       
       <div className="mx-auto max-w-6xl relative">

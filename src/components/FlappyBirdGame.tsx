@@ -114,8 +114,9 @@ export const FlappyBirdGame = ({ onClose, onRedeem }: FlappyBirdGameProps) => {
     
     const canvas = canvasRef.current;
     const handleTouch = (e: TouchEvent) => {
-      if (gameState === 'playing') {
+      if (gameState === 'playing' || gameState === 'getReady') {
         e.preventDefault(); // Stop scrolling/zooming while playing
+        handleJump();
       }
     };
 
@@ -373,6 +374,11 @@ export const FlappyBirdGame = ({ onClose, onRedeem }: FlappyBirdGameProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                onPointerDown={(e) => {
+                  if ((e.target as HTMLElement).tagName !== 'BUTTON') {
+                    handleJump();
+                  }
+                }}
                 className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-slate-950 text-center"
               >
                 <video 
@@ -382,7 +388,7 @@ export const FlappyBirdGame = ({ onClose, onRedeem }: FlappyBirdGameProps) => {
                   playsInline 
                   className="absolute inset-0 h-full w-full object-cover opacity-40"
                 >
-                  <source src="/Recording 2026-04-13 093206.mp4" type="video/mp4" />
+                  <source src="/flappy-pixelpro-discount.mp4" type="video/mp4" />
                 </video>
                 <div className="relative z-10 flex flex-col items-center justify-center">
                 <div className="mb-6 rounded-full bg-emerald-500 p-4 text-white shadow-[0_0_30px_rgba(16,185,129,0.5)]">
@@ -407,6 +413,10 @@ export const FlappyBirdGame = ({ onClose, onRedeem }: FlappyBirdGameProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  handleJump();
+                }}
                 className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/40 text-center"
               >
                 <div className="mb-8 flex flex-col items-center">
@@ -429,6 +439,12 @@ export const FlappyBirdGame = ({ onClose, onRedeem }: FlappyBirdGameProps) => {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                onPointerDown={(e) => {
+                  // Only trigger jump if not clicking a button
+                  if ((e.target as HTMLElement).tagName !== 'BUTTON') {
+                    handleJump();
+                  }
+                }}
                 className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 p-8 text-center"
               >
                 <div className="mb-4 text-rose-500">

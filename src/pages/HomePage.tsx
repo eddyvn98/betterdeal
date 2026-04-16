@@ -26,6 +26,7 @@ interface HomePageProps {
   onChatVisibilityChange: (inView: boolean) => void;
   onOpenGame: () => void;
   onFilesAttached: (files: File[]) => void;
+  order: { id: string; status: string } | null;
 }
 
 export const HomePage = ({
@@ -48,6 +49,7 @@ export const HomePage = ({
   onChatVisibilityChange,
   onOpenGame,
   onFilesAttached,
+  order
 }: HomePageProps) => (
   <main>
     <HeroSection />
@@ -75,6 +77,7 @@ export const HomePage = ({
       onVisibilityChange={onChatVisibilityChange}
       onOpenGame={onOpenGame}
       onFilesAttached={onFilesAttached}
+      order={order}
     />
   </main>
 );

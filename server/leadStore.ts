@@ -183,3 +183,39 @@ export const getAdminStatus = (sessionId: string): 'idle' | 'sending' | 'sent' |
 export const setAdminStatus = (sessionId: string, status: 'idle' | 'sending' | 'sent' | 'failed') => {
   db.prepare('UPDATE sessions SET admin_status = ?, updated_at = ? WHERE id = ?').run(status, new Date().toISOString(), sessionId);
 };
+
+export interface LeadSummary {
+  sessionId: string;
+  projectSummary: string;
+  contactName: string;
+  contactValue: string;
+  dealStage: string;
+  updatedAt: string;
+  adminStatus: string;
+}
+
+export const getAllLeads = (): LeadSummary[] => {
+  const rows = db.prepare(`
+    SELECT 
+      l.session_id, 
+      l.project_summary, 
+      l.contact_name, 
+      l.contact_value, 
+      l.deal_stage, 
+      s.updated_at, 
+      s.admin_status
+    FROM leads l
+    JOIN sessions s ON l.session_id = s.id
+    ORDER BY s.updated_at DESC
+  `).all() as any[];
+
+  return rows.map(row => ({
+    sessionId: row.session_id,
+    projectSummary: row.project_summary,
+    contactName: row.contact_name,
+    contactValue: row.contact_value,
+    dealStage: row.deal_stage,
+    updatedAt: row.updated_at,
+    adminStatus: row.admin_status
+  }));
+};

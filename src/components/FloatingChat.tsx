@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bot, Send, X, MessageSquare, Sparkles, Maximize2 } from 'lucide-react';
+import { cn } from '../lib/utils';
+import { Bot, Send, X, MessageSquare, Sparkles, Maximize2, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Message } from '../types';
-import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -15,7 +15,7 @@ interface FloatingChatProps {
   isVisible: boolean;
   inputValue: string;
   setInputValue: (val: string) => void;
-  onSend: () => void;
+  onSend: (forcedContent?: string) => void;
   onScrollToMain: () => void;
   onFilesAttached: (files: File[]) => void;
 }
@@ -174,7 +174,33 @@ export const FloatingChat = ({
                             </div>
                           ) : (
                             <div className="prose prose-xs prose-p:my-0 break-words">
-                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                  p: ({ children }: any) => {
+                                    const text = React.Children.toArray(children).join('');
+                                    if (text.includes('[REQUEST_HANDOFF]')) {
+                                      const parts = text.split('[REQUEST_HANDOFF]');
+                                      return (
+                                        <div className="space-y-3">
+                                          <p className="my-0 leading-relaxed">{parts[0]}</p>
+                                          <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => onSend(t('chat.handoff_msg'))}
+                                            className="flex items-center justify-center gap-2 w-full rounded-xl bg-emerald-600 py-2.5 px-4 text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+                                          >
+                                            <CheckCircle2 size={16} className="animate-pulse" />
+                                            <span className="font-bold text-[11px] uppercase tracking-tight">{t('chat.handoff_btn')}</span>
+                                          </motion.button>
+                                          {parts[1] && <p className="my-0 leading-relaxed">{parts[1]}</p>}
+                                        </div>
+                                      );
+                                    }
+                                    return <p className="my-0 leading-relaxed">{children}</p>;
+                                  }
+                                }}
+                              >
                                 {msg.content || ''}
                               </ReactMarkdown>
                               {msg.attachments && msg.attachments.length > 0 && (
@@ -212,7 +238,7 @@ export const FloatingChat = ({
                       className="flex-1 bg-transparent py-2 text-xs text-slate-900 focus:outline-none"
                     />
                     <button
-                      onClick={onSend}
+                      onClick={() => onSend()}
                       disabled={!inputValue.trim()}
                       className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white transition-opacity disabled:opacity-40"
                     >

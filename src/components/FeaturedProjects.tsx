@@ -16,7 +16,7 @@ export const FeaturedProjects = ({ projects, onAiAnalysis, loadingProjects, proj
   const { t } = useTranslation();
 
   return (
-    <section id="work" className="scroll-mt-24 border-t border-slate-200 bg-white/60 px-6 py-24">
+    <section id="work" className="scroll-mt-24 border-t border-slate-200 bg-white/60 px-4 md:px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 flex items-end justify-between gap-6">
           <div className="max-w-2xl">

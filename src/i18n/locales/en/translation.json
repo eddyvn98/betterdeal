@@ -92,7 +92,10 @@
     "guide_step2": "Specify your budget and desired timeline (if any).",
     "guide_step3": "Attach reference images of interfaces you like.",
     "lang_switch": "Preferred Language",
-    "closing_hint": "If you are not satisfied with the price, please send your full requirements (e.g., {{project_summary}}) and reference prices from ChatGPT / Gemini to get the best deal, then send them to us via Zalo/Telegram. We will meet your requirements."
+    "closing_hint": "If you are not satisfied with the price, please send your full requirements (e.g., {{project_summary}}) and reference prices from ChatGPT / Gemini to get the best deal, then send them to us via Zalo/Telegram. We will meet your requirements.",
+    "handoff_guide": "Satisfied with the quote? Click the button below for a consultation and close your project now!",
+    "handoff_btn": "Close Deal & Contact Now",
+    "handoff_msg": "I'd like to close this project based on our discussion. Please have a consultant contact me immediately!"
   },
   "featured": {
     "title": "Selected case studies",

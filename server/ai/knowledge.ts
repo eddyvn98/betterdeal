@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { ai } from '../ai';
 import { db } from '../db';
+import { getLead } from '../leadStore';
+import { leadToMarkdown } from './formatter';
 
 // Định nghĩa cấu trúc tri thức
 interface KnowledgeItem {
@@ -136,17 +138,16 @@ export async function searchExperience(query: string, limit: number = 2) {
     .filter(item => item.score > 0.75) // Ngưỡng tương đồng cho kinh nghiệm (khắt khe hơn)
     .slice(0, limit);
 
-  return results.map(item => ({
-    summary: item.project_summary,
-    type: item.project_type,
-    quote: item.estimated_quote
-  }));
+  return results.map(item => {
+    const lead = getLead(item.session_id);
+    return leadToMarkdown(lead, item.session_id);
+  });
 }
 
 /**
  * Build chuỗi Context từ kết quả search kiến thức
  */
-export function buildKnowledgeContext(searchResults: { question: string, answer: string }[], experienceResults: { summary: string, type: string, quote: string }[] = []) {
+export function buildKnowledgeContext(searchResults: { question: string, answer: string }[], experienceResults: string[] = []) {
   const contexts = [];
 
   if (searchResults.length > 0) {
@@ -161,8 +162,8 @@ export function buildKnowledgeContext(searchResults: { question: string, answer:
   if (experienceResults.length > 0) {
     contexts.push(
       '--- START OF SIMILAR PAST PROJECTS (CASE STUDIES) ---',
-      'Here are some anonymized examples of similar projects we have successfully quoted/delivered before. Use these patterns to keep your current quote consistent and professional. DO NOT reveal that these are specific individual clients.',
-      ...experienceResults.map(exp => `PROJECT TYPE: ${exp.type}\nPAST REQUIREMENT: "${exp.summary}"\nPAST QUOTE: ${exp.quote}`),
+      'Following are detailed technical dossiers of similar projects we have delivered. Use these as high-quality references for features, tech stacks, and pricing consistency:',
+      ...experienceResults,
       '--- END OF SIMILAR PAST PROJECTS ---'
     );
   }

@@ -19,7 +19,7 @@ export const LeadQualificationSchema = z.object({
   missingInfo: z.array(z.string()).default([]).describe('Các thông tin còn thiếu cần thu thập thêm'),
   nextQuestions: z.array(z.string()).default([]).describe('Các câu hỏi tiếp theo để làm rõ yêu cầu'),
   confidence: z.enum(['low', 'medium', 'high']).default('low').describe('Độ tin cậy của thông tin đã thu thập'),
-  dealStage: z.enum(['discovery', 'qualified', 'quoted', 'won']).default('discovery').describe('Giai đoạn của deal'),
+  dealStage: z.enum(['discovery', 'qualified', 'negotiation', 'quoted', 'won']).default('discovery').describe('Giai đoạn của deal'),
   readyToHandoff: z.boolean().default(false).describe('Đã đủ thông tin để chuyển qua bộ phận kỹ thuật chưa'),
   adminSummary: z.string().default('').describe('Tóm tắt ngắn gọn cho admin về status của lead này'),
   redeemedVoucherCode: z.string().default('').describe('Mã voucher mà khách đã nhận được từ mini-game'),

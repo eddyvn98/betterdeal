@@ -92,7 +92,10 @@
     "guide_step2": "Đưa ra ngân sách và thời gian mong muốn (nếu có).",
     "guide_step3": "Đính kèm ảnh tham khảo về giao diện bạn thích.",
     "lang_switch": "Ngôn ngữ ưa thích",
-    "closing_hint": "Nếu bạn chưa hài lòng về giá, hãy gửi đầy đủ yêu cầu (ví dụ: {{project_summary}}) và tham khảo giá từ ChatGPT / Gemini để được giá tốt nhất sau đó hãy gửi về Zalo/Telegram. Chúng tôi sẽ đáp ứng yêu cầu của bạn."
+    "closing_hint": "Nếu bạn chưa hài lòng về giá, hãy gửi đầy đủ yêu cầu (ví dụ: {{project_summary}}) và tham khảo giá từ ChatGPT / Gemini để được giá tốt nhất sau đó hãy gửi về Zalo/Telegram. Chúng tôi sẽ đáp ứng yêu cầu của bạn.",
+    "handoff_guide": "Hài lòng với báo giá? Nhấn nút dưới đây để nhân viên liên hệ tư vấn và chốt dự án ngay cho bạn!",
+    "handoff_btn": "Chốt deal & Liên hệ ngay",
+    "handoff_msg": "Tôi muốn chốt dự án này với các thông tin đã trao đổi. Vui lòng liên hệ nhân viên tư vấn cho tôi ngay!"
   },
   "featured": {
     "title": "Case study tiêu biểu",

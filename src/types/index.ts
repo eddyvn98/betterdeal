@@ -63,7 +63,7 @@ export interface LeadQualification {
   missingInfo: string[];
   nextQuestions: string[];
   confidence: 'low' | 'medium' | 'high';
-  dealStage: 'discovery' | 'qualified' | 'quoted' | 'won';
+  dealStage: 'discovery' | 'qualified' | 'negotiation' | 'quoted' | 'closed';
   readyToHandoff: boolean;
   adminSummary: string;
   isSharedExperience: boolean;
@@ -81,4 +81,5 @@ export interface ChatApiResponse {
   message: Message;
   lead: LeadQualification;
   adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
+  order?: { id: string; status: string } | null;
 }

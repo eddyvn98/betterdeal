@@ -18,6 +18,8 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { HomePage } from './pages/HomePage';
+import { AdminPage } from './pages/AdminPage';
+import { TrackingPage } from './pages/TrackingPage';
 
 const emptyLead: LeadQualification = {
   projectSummary: '',
@@ -60,6 +62,7 @@ const App = () => {
   const [lead, setLead] = useState<LeadQualification>(emptyLead);
   const [adminStatus, setAdminStatus] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle');
   const [sessionId, setSessionId] = useState('');
+  const [order, setOrder] = useState<{ id: string; status: string } | null>(null);
   const [isChatVisible, setIsChatVisible] = useState(true);
   const [isGameOpen, setIsGameOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -89,6 +92,7 @@ const App = () => {
             setChatMessages(sessionState.messages);
             setLead(sessionState.lead);
             setAdminStatus(sessionState.adminStatus);
+            if ((sessionState as any).order) setOrder((sessionState as any).order);
           } catch (error) {
             console.warn('Invalid session, creating new one:', error);
             const session = await createSession();
@@ -177,6 +181,7 @@ const App = () => {
         if (options.silent) {
           setLead(response.lead);
           setAdminStatus(response.adminStatus);
+          if (response.order) setOrder(response.order);
           return;
         }
 
@@ -198,6 +203,7 @@ const App = () => {
         });
         setLead(response.lead);
         setAdminStatus(response.adminStatus);
+        if (response.order) setOrder(response.order);
         setAttachedImages([]);
       } else if (projectId !== null) {
         const response = await ai.models.generateContent({
@@ -297,6 +303,7 @@ const App = () => {
       setChatMessages([]);
       setLead(emptyLead);
       setAdminStatus('idle');
+      setOrder(null);
       setAttachedImages([]);
       setChallengeInput('');
     } catch (error) {
@@ -345,6 +352,7 @@ const App = () => {
                 onChatVisibilityChange={setIsChatVisible}
                 onOpenGame={() => setIsGameOpen(true)}
                 onFilesAttached={handleFiles}
+                order={order}
               />
             }
           />
@@ -366,6 +374,16 @@ const App = () => {
           <Route
             path="/projects/:slug"
             element={<ProjectDetailPage />}
+          />
+
+          <Route
+            path="/admin"
+            element={<AdminPage />}
+          />
+
+          <Route
+            path="/tracking/:ticket"
+            element={<TrackingPage />}
           />
         </Routes>
 

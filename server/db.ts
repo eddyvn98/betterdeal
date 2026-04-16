@@ -29,6 +29,7 @@ db.exec(`
     role TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TEXT NOT NULL,
+    attachments_json TEXT NOT NULL DEFAULT '[]',
     FOREIGN KEY (session_id) REFERENCES sessions(id)
   );
 
@@ -61,14 +62,40 @@ db.exec(`
     updated_at TEXT NOT NULL,
     FOREIGN KEY (session_id) REFERENCES sessions(id)
   );
+
+  CREATE TABLE IF NOT EXISTS orders (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    project_summary TEXT NOT NULL,
+    total_amount INTEGER NOT NULL DEFAULT 0,
+    paid_amount INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'pending',
+    progress_step INTEGER NOT NULL DEFAULT 0,
+    manual_priority_score INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES sessions(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id TEXT NOT NULL,
+    amount INTEGER NOT NULL,
+    provider_transaction_id TEXT UNIQUE,
+    status TEXT NOT NULL DEFAULT 'matched',
+    bank_ref TEXT,
+    payer_name TEXT,
+    created_at TEXT NOT NULL,
+    raw_payload TEXT,
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+  );
 `);
 
-// Migration an toàn cho database hiện tại
+// Migration logic for existing database
 try {
   const tableInfo = db.prepare("PRAGMA table_info(leads)").all() as any[];
   const hasSharedExp = tableInfo.some(col => col.name === 'is_shared_experience');
   const hasEmbedding = tableInfo.some(col => col.name === 'experience_embedding');
-
   const hasVoucher = tableInfo.some(col => col.name === 'redeemed_voucher_code');
   const hasDiscount = tableInfo.some(col => col.name === 'applied_discount');
 
@@ -91,6 +118,5 @@ try {
     db.exec("ALTER TABLE messages ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'");
   }
 } catch (e) {
-  console.warn('Migration warning (expected if columns already exist):', e);
+  console.warn('Migration warning:', e);
 }
-

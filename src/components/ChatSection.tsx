@@ -24,9 +24,11 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { AISkeleton } from './AISkeleton';
 import { LeadQualification, Message } from '../types';
 import { cn } from '../lib/utils';
+import { Package, Zap, ShieldCheck } from 'lucide-react';
 
 
 /** Shared ReactMarkdown table renderer config */
@@ -62,14 +64,15 @@ interface ChatSectionProps {
   attachedImages: string[];
   handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeImage: (idx: number) => void;
-  handleSendMessage: () => void;
+  handleSendMessage: (forcedContent?: string) => void;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   lead: LeadQualification;
   adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
   onResetSession: () => void;
   onVisibilityChange?: (inView: boolean) => void;
-  onOpenGame: () => void;
+  onOpenGame: void;
   onFilesAttached: (files: File[]) => void;
+  order?: { id: string; status: string } | null;
 }
 
 export const ChatSection = ({
@@ -88,6 +91,7 @@ export const ChatSection = ({
   onVisibilityChange,
   onOpenGame,
   onFilesAttached,
+  order
 }: ChatSectionProps) => {
   const { t, i18n } = useTranslation();
   const isVi = i18n.language.startsWith('vi');
@@ -197,7 +201,7 @@ export const ChatSection = ({
     <section
       ref={sectionRef}
       id="challenge"
-      className="relative overflow-hidden bg-slate-900 px-6 py-24 scroll-mt-24 contain-paint"
+      className="relative overflow-hidden bg-slate-900 px-3 md:px-6 py-24 scroll-mt-24 contain-paint"
     >
       <div className="absolute right-0 top-0 h-96 w-96 -mr-32 -mt-32 rounded-full bg-emerald-500/10 blur-3xl" />
 
@@ -215,12 +219,12 @@ export const ChatSection = ({
       <div className="relative mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="flex h-[680px] flex-col overflow-hidden rounded-3xl border border-slate-800 bg-white shadow-2xl transition-all duration-300">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 bg-white p-6">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-white p-3 md:p-6">
             <div>
-              <h2 className="font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
+              <h2 className="font-display text-lg font-extrabold text-slate-900 md:text-3xl">
                 {i18n.language.startsWith('vi') ? 'Tư vấn và báo giá bởi Emdash' : 'Consulting & Quoting by Emdash'}
               </h2>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-1 text-[10px] text-slate-500 md:mt-2 md:text-sm">
                 {i18n.language.startsWith('vi')
                   ? 'Mỗi lượt chỉ hỏi ngắn gọn, ưu tiên làm rõ yêu cầu, ngân sách, timeline và thông tin liên hệ.'
                   : 'Brief interactions prioritized on clarifying requirements, budget, timeline, and contact info.'}
@@ -231,20 +235,20 @@ export const ChatSection = ({
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onOpenGame}
-                className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100"
+                className="flex items-center gap-1.5 md:gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-2 md:px-4 py-1 md:py-1.5 text-[9px] md:text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100"
                 title={t('game.cta_title')}
               >
-                <Gamepad2 size={16} className="animate-pulse" />
+                <Gamepad2 size={12} className="animate-pulse md:size-[16px]" />
                 <span>{t('game.cta_title')}</span>
               </motion.button>
               <motion.button
                 whileHover={{ rotate: 180 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onResetSession}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
+                className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl border border-slate-200 text-slate-400 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
                 title={t('chat.reset')}
               >
-                <RotateCcw size={20} />
+                <RotateCcw size={16} md:size={20} />
               </motion.button>
             </div>
           </div>
@@ -252,7 +256,7 @@ export const ChatSection = ({
           {/* Message list */}
           <div
             ref={scrollRef}
-            className="flex-1 space-y-6 overflow-y-auto bg-slate-50/30 p-6 md:p-8 overscroll-contain"
+            className="flex-1 space-y-6 overflow-y-auto bg-slate-50/30 p-4 md:p-8 overscroll-contain"
             onScroll={(e) => {
               const el = e.currentTarget as HTMLDivElement;
               const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
@@ -261,7 +265,7 @@ export const ChatSection = ({
           >
             {/* Empty state */}
             {chatMessages.length === 0 && (
-              <div className="flex h-full flex-col overflow-y-auto px-6 py-10 md:px-12 overscroll-contain">
+              <div className="flex h-full flex-col overflow-y-auto px-4 py-10 md:px-12 overscroll-contain">
                 <div className="mx-auto w-full max-w-2xl space-y-12">
                   {/* Hero Brand Section */}
                   <div className="flex flex-col items-center text-center">
@@ -463,6 +467,59 @@ export const ChatSection = ({
                                     </div>
                                   );
                                 }
+
+                                if (text.includes('[REQUEST_HANDOFF]')) {
+                                  const parts = text.split('[REQUEST_HANDOFF]');
+                                  return (
+                                    <div className="space-y-4">
+                                      <p className="leading-relaxed">{parts[0]}</p>
+                                      <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="relative overflow-hidden rounded-2xl border border-emerald-100 bg-emerald-50/50 p-1 shadow-sm"
+                                      >
+                                        <div className="p-4">
+                                          <p className="mb-3 text-xs font-medium text-emerald-800 flex items-center gap-2">
+                                            <Sparkles size={14} className="text-emerald-500" />
+                                            {t('chat.handoff_guide')}
+                                          </p>
+                                          <motion.button
+                                            whileHover={{ scale: 1.02, translateY: -2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => handleSendMessage(t('chat.handoff_msg'))}
+                                            className="flex items-center justify-center gap-3 w-full rounded-xl bg-emerald-600 py-3.5 px-6 text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+                                          >
+                                            <motion.div
+                                              animate={{ 
+                                                scale: [1, 1.2, 1],
+                                                rotate: [0, 10, -10, 0] 
+                                              }}
+                                              transition={{ 
+                                                duration: 2,
+                                                repeat: Infinity,
+                                                ease: "easeInOut"
+                                              }}
+                                            >
+                                              <CheckCircle2 size={20} />
+                                            </motion.div>
+                                            <span className="font-bold tracking-tight">{t('chat.handoff_btn')}</span>
+                                          </motion.button>
+                                        </div>
+                                        
+                                        {/* Subtle animated background element */}
+                                        <motion.div 
+                                          animate={{ 
+                                            opacity: [0.1, 0.3, 0.1],
+                                            scale: [1, 1.2, 1] 
+                                          }}
+                                          transition={{ duration: 4, repeat: Infinity }}
+                                          className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-emerald-200/40 blur-2xl"
+                                        />
+                                      </motion.div>
+                                      {parts[1] && <p className="leading-relaxed">{parts[1]}</p>}
+                                    </div>
+                                  );
+                                }
                                 return <p className="leading-relaxed">{children}</p>;
                               }
                             }}
@@ -489,10 +546,58 @@ export const ChatSection = ({
                 </motion.div>
               );
             })}
+
+            {/* Order CTA Button */}
+            {order && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 mb-4 px-4"
+              >
+                <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-[2.5rem] p-8 border border-slate-800 shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700">
+                    <Package size={80} className="text-emerald-500" />
+                  </div>
+                  
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <p className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">
+                          {isVi ? 'Đơn hàng đã sẵn sàng' : 'Order is ready'}
+                        </p>
+                      </div>
+                      <h3 className="text-2xl font-black text-white mb-2">
+                        {isVi ? 'Chốt Deal & Triển khai ngay' : 'Close Deal & Start Now'}
+                      </h3>
+                      <p className="text-slate-400 text-sm max-w-sm">
+                        {isVi 
+                          ? 'Mã ticket của bạn đã được khởi tạo. Hãy kiểm tra tiến trình và thực hiện đặt cọc để giữ vị trí ưu tiên.' 
+                          : 'Your ticket ID has been generated. Check the progress and make a deposit to secure your priority.'}
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-col gap-3 min-w-[200px]">
+                      <Link 
+                        to={`/tracking/${order.id}`}
+                        className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 px-8 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all active:scale-95 text-sm"
+                      >
+                        <Zap size={18} />
+                        {isVi ? 'KIỂM TRA ĐƠN HÀNG' : 'CHECK ORDER STATUS'}
+                      </Link>
+                      <div className="flex items-center justify-center gap-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        <ShieldCheck size={12} className="text-emerald-500" />
+                        SECURE PAYMENT BY SEPAY
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
 
           {/* Input area */}
-          <div className="border-t border-slate-100 bg-white p-4 md:p-6">
+          <div className="border-t border-slate-100 bg-white p-3 md:p-6">
             <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-inner transition-all hover:border-slate-300 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20">
               <AnimatePresence>
                 {attachedImages.length > 0 && (
@@ -574,7 +679,7 @@ export const ChatSection = ({
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={handleSendMessage}
+                      onClick={() => handleSendMessage()}
                       disabled={isAnalyzing || (!challengeInput.trim() && attachedImages.length === 0)}
                       className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg transition-all hover:bg-emerald-700 disabled:opacity-50"
                     >

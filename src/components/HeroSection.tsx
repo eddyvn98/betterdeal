@@ -4,7 +4,7 @@ import { HeroVisual } from './hero/HeroVisual';
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-white px-6 pb-20 pt-16 md:pb-32 md:pt-24">
+    <section className="relative overflow-hidden bg-white px-4 md:px-6 pb-20 pt-16 md:pb-32 md:pt-24">
       {/* Premium Background Elements */}
       <div className="absolute left-0 top-0 -z-10 h-full w-full opacity-40 overflow-hidden pointer-events-none">
         <div className="absolute left-[-10%] top-[-10%] h-[400px] w-[400px] rounded-full bg-emerald-200 blur-[60px] will-change-transform" />
