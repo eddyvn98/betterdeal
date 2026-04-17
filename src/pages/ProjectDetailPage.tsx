@@ -20,11 +20,14 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
-import { projects } from '../data/projects';
 import { Project } from '../types';
 import { AISkeleton } from '../components/AISkeleton';
 
-export const ProjectDetailPage = () => {
+interface ProjectDetailPageProps {
+  projects: Project[];
+}
+
+export const ProjectDetailPage = ({ projects }: ProjectDetailPageProps) => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();

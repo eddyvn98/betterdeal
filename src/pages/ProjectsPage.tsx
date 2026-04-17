@@ -5,8 +5,9 @@ import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { ProjectCard } from '../components/ProjectCard';
 import { Project } from '../types';
-import { categories } from '../data/projects';
 import { cn } from '../lib/utils';
+// Remove unused static categories if we recalculate them
+import { categories as staticCategories } from '../data/projects';
 
 interface ProjectsPageProps {
   projects: Project[];
@@ -32,6 +33,9 @@ export const ProjectsPage = ({
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  // Combine static categories and dynamic ones from CMS projects
+  const allCategories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
+
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.98))] px-6 py-24">
       <div className="mx-auto max-w-7xl">
@@ -46,7 +50,7 @@ export const ProjectsPage = ({
         </div>
 
         <div className="mb-12 flex flex-wrap gap-2">
-          {categories.map((cat) => (
+          {allCategories.map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}

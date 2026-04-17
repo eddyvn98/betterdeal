@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { Project, Message, LeadQualification } from './types';
-import { projects } from './data/projects';
+import { projects as staticProjects } from './data/projects';
+import { fetchCMSProjects } from './services/cms';
 import { ai, getSystemPrompt } from './services/gemini';
 import { createSession, fetchSessionState, sendChatMessage } from './services/api';
 import { Header } from './components/Header';
@@ -65,6 +66,7 @@ const App = () => {
   const [order, setOrder] = useState<{ id: string; status: string } | null>(null);
   const [isChatVisible, setIsChatVisible] = useState(true);
   const [isGameOpen, setIsGameOpen] = useState(false);
+  const [projects, setProjects] = useState<Project[]>(staticProjects);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const activeChallengeRequestsRef = useRef(0);
   const sendLockRef = useRef(false);
@@ -112,6 +114,40 @@ const App = () => {
     };
 
     bootstrap();
+
+    // Fetch dynamic projects from CMS
+    const loadCMSProjects = async () => {
+      try {
+        const cmsData = await fetchCMSProjects();
+        if (cmsData && cmsData.length > 0) {
+          const mappedProjects: Project[] = cmsData.map((p, index) => ({
+            id: 1000 + index, // Generate numerical IDs for CMS projects to avoid collisions
+            slug: p.slug || p.id,
+            title: p.data?.title || 'Untitled',
+            category: p.taxonomies?.category?.[0] || 'Uncategorized',
+            stack: p.taxonomies?.tag || [],
+            stars: 0,
+            image: p.data?.featured_image || '',
+            description: p.data?.summary || '',
+            longDescription: p.data?.summary || '',
+            liveUrl: p.data?.url,
+            year: p.data?.year,
+            featured: true, // Auto-feature CMS items
+          }));
+          
+          setProjects((prev) => {
+            // Merge CMS projects uniquely
+            const existingNames = new Set(prev.map(pr => pr.title));
+            const newFiltered = mappedProjects.filter(mp => !existingNames.has(mp.title));
+            return [...newFiltered, ...prev];
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load CMS projects:', error);
+      }
+    };
+
+    loadCMSProjects();
   }, []);
 
   const handleFiles = async (files: File[]) => {
@@ -373,7 +409,7 @@ const App = () => {
 
           <Route
             path="/projects/:slug"
-            element={<ProjectDetailPage />}
+            element={<ProjectDetailPage projects={projects} />}
           />
 
           <Route

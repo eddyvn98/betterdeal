@@ -3,11 +3,11 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, CheckCircle2, MessageSquare, Clock, 
-  ChevronRight, Phone, Layout, Cpu, 
+  Layout, Cpu, 
   Zap, AlertCircle, ArrowLeft,
-  Calendar, CreditCard, Sparkles, User, FileText, RefreshCw, Package
+  CreditCard, Sparkles, User, FileText, RefreshCw, Package
 } from 'lucide-react';
-import { fetchAdminLeads, fetchAdminLeadDetail, fetchAdminOrders, updateAdminOrder, fetchAdminPayments } from '../services/api';
+import { fetchAdminLeads, fetchAdminLeadDetail, fetchAdminOrders, updateAdminOrder, fetchAdminPayments, fetchAdminOrderBundleBySession } from '../services/api';
 import { Message, LeadQualification } from '../types';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -22,6 +22,19 @@ interface LeadSummary {
   updatedAt: string;
   adminStatus: string;
 }
+
+const ORDER_STEPS = [
+  { id: 'pending', label: 'Chờ duyệt' },
+  { id: 'confirmed', label: 'Xác nhận' },
+  { id: 'in_queue', label: 'Xếp hàng' },
+  { id: 'processing', label: 'Thực hiện' },
+  { id: 'designing', label: 'Thiết kế' },
+  { id: 'developing', label: 'Lập trình' },
+  { id: 'testing', label: 'Kiểm thử' },
+  { id: 'revision', label: 'Chỉnh sửa' },
+  { id: 'completed', label: 'Hoàn thành' },
+  { id: 'cancelled', label: 'Hủy' },
+] as const;
 
 export const AdminPage = () => {
   const [searchParams] = useSearchParams();
@@ -38,6 +51,8 @@ export const AdminPage = () => {
   const [viewMode, setViewMode] = useState<'leads' | 'orders'>('leads');
   const [orders, setOrders] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [leadOrder, setLeadOrder] = useState<any | null>(null);
+  const [leadPayments, setLeadPayments] = useState<any[]>([]);
 
   useEffect(() => {
     // Ưu tiên lấy auth từ URL, nếu không có thì lấy từ sessionStorage
@@ -56,7 +71,12 @@ export const AdminPage = () => {
 
     const loadLeads = async () => {
       try {
-        const data = await fetchAdminLeads(currentAuth);
+        let data: any[] = [];
+        try {
+          data = await fetchAdminLeads(currentAuth);
+        } catch {
+          data = pathSessionId ? await fetchAdminLeads(currentAuth, pathSessionId) : [];
+        }
         setLeads(data);
         
         // Auto-load if sessionId in URL
@@ -84,10 +104,15 @@ export const AdminPage = () => {
     
     setIsDetailLoading(true);
     try {
-      const data = await fetchAdminLeadDetail(id, activeAuth);
+      const [data, bundle] = await Promise.all([
+        fetchAdminLeadDetail(id, activeAuth),
+        fetchAdminOrderBundleBySession(id, activeAuth)
+      ]);
       console.log('[ADMIN] Fetch detail success:', id);
       setLeadDetail(data);
       setSelectedLeadId(id);
+      setLeadOrder(bundle.order);
+      setLeadPayments(bundle.payments || []);
     } catch (err) {
       console.error('[ADMIN] Failed to load lead detail:', err);
     } finally {
@@ -101,8 +126,8 @@ export const AdminPage = () => {
     setIsDetailLoading(true);
     try {
       const [ordData, payData] = await Promise.all([
-        fetchAdminOrders(activeAuth),
-        fetchAdminPayments(activeAuth)
+        fetchAdminOrders(activeAuth, pathSessionId || undefined),
+        fetchAdminPayments(activeAuth, pathSessionId || undefined)
       ]);
       setOrders(ordData);
       setPayments(payData);
@@ -117,8 +142,13 @@ export const AdminPage = () => {
     const activeAuth = auth || window.sessionStorage.getItem('pixelpro_admin_auth');
     if (!activeAuth) return;
     try {
-      await updateAdminOrder(id, activeAuth, payload);
+      await updateAdminOrder(id, activeAuth, payload, pathSessionId || undefined);
       loadOrders(); // Refresh
+      if (selectedLeadId) {
+        const bundle = await fetchAdminOrderBundleBySession(selectedLeadId, activeAuth);
+        setLeadOrder(bundle.order);
+        setLeadPayments(bundle.payments || []);
+      }
     } catch (err) {
       alert('Failed to update order');
     }
@@ -129,6 +159,14 @@ export const AdminPage = () => {
     if (activeTab === 'won') return l.dealStage === 'won' || l.dealStage === 'quoted' || l.dealStage === 'negotiation';
     return l.dealStage !== 'won' && l.dealStage !== 'quoted' && l.dealStage !== 'negotiation';
   });
+
+  const statusLabel = (status?: string) => ORDER_STEPS.find((s) => s.id === status)?.label || 'Chờ duyệt';
+
+  const quickUpdateLeadOrder = async (nextStatus: string) => {
+    if (!leadOrder?.id) return;
+    const stepIndex = ORDER_STEPS.findIndex((s) => s.id === nextStatus);
+    await handleUpdateOrder(leadOrder.id, { status: nextStatus, progressStep: Math.max(stepIndex, 0) });
+  };
 
   if (isLoading) {
     return (
@@ -166,8 +204,16 @@ export const AdminPage = () => {
       {/* Sidebar - Lead List */}
       <div className="flex w-full max-w-sm flex-col border-r border-slate-200 bg-white md:max-w-[400px]">
         <div className="border-b border-slate-100 p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">PixelPro Admin</p>
+              <h1 className="text-xl font-black tracking-tight text-slate-900">Control Center</h1>
+            </div>
+            <div className="rounded-xl bg-emerald-50 p-2 text-emerald-600">
+              <Cpu size={18} />
+            </div>
           </div>
-          
+
           <div className="flex flex-col gap-2">
             <button 
               onClick={() => setViewMode('leads')}
@@ -231,7 +277,7 @@ export const AdminPage = () => {
                     <div className="mb-2 flex items-center justify-between pointer-events-none">
                       <span className={cn(
                         "rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest",
-                        ['won', 'quoted', 'closed'].includes(lead.dealStage)
+                        ['won', 'quoted'].includes(lead.dealStage)
                           ? "bg-emerald-100 text-emerald-700" 
                           : "bg-slate-100 text-slate-600"
                       )}>
@@ -285,6 +331,80 @@ export const AdminPage = () => {
                     </button>
                 </div>
               </div>
+
+              <section className="mb-8 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-200/50 p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-500">Quy trình triển khai</h3>
+                  {leadOrder ? (
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-slate-500 font-bold">Ticket:</span>
+                      <code className="px-2 py-1 rounded bg-emerald-50 text-emerald-700 font-black">{leadOrder.id}</code>
+                    </div>
+                  ) : (
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">Chưa tạo ticket</span>
+                  )}
+                </div>
+
+                {leadOrder ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Trạng thái hiện tại</p>
+                        <p className="text-base font-black text-slate-900 mt-1">{statusLabel(leadOrder.status)}</p>
+                      </div>
+                      <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Đã thanh toán</p>
+                        <p className="text-base font-black text-emerald-600 mt-1">{(leadOrder.paidAmount || 0).toLocaleString('vi-VN')}đ</p>
+                      </div>
+                      <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Tổng hợp đồng</p>
+                        <p className="text-base font-black text-slate-900 mt-1">{(leadOrder.totalAmount || 0).toLocaleString('vi-VN')}đ</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-slate-500 mb-2">Bấm mốc đã hoàn thành để cập nhật nhanh:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {ORDER_STEPS.filter((s) => s.id !== 'cancelled').map((s) => (
+                          <button
+                            key={s.id}
+                            onClick={() => quickUpdateLeadOrder(s.id)}
+                            className={cn(
+                              "px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wide border transition-all",
+                              leadOrder.status === s.id
+                                ? "bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-200"
+                                : "bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:text-emerald-600"
+                            )}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl bg-slate-900 text-white p-4">
+                      <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-3">Thanh toán theo hồ sơ này</h4>
+                      {leadPayments.length > 0 ? (
+                        <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                          {leadPayments.map((p) => (
+                            <div key={p.id} className="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3 py-2">
+                              <div>
+                                <p className="text-xs font-black text-emerald-300">+{Number(p.amount || 0).toLocaleString('vi-VN')}đ</p>
+                                <p className="text-[10px] text-slate-400">{p.payer_name || 'MBBank'}</p>
+                              </div>
+                              <p className="text-[10px] text-slate-400">{new Date(p.created_at).toLocaleString('vi-VN')}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-slate-400">Chưa có giao dịch cho ticket này.</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">Deal đã chốt nhưng chưa có đơn. Hệ thống sẽ tạo ticket khi có báo giá hợp lệ.</p>
+                )}
+              </section>
 
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
                 {/* Left: Project Dossier (Markdown) */}
@@ -386,9 +506,7 @@ export const AdminPage = () => {
                      <tr>
                        <th className="px-6 py-4">Mã đơn / Dự án</th>
                        <th className="px-6 py-4">Trạng thái</th>
-                       <th className="px-6 py-4">Tài chính</th>
-                       <th className="px-6 py-4">Thao tác</th>
-                     </tr>
+                       <th className="px-6 py-4">Tài chính</th>                     </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-50">
                      {orders.map(o => (
@@ -407,11 +525,15 @@ export const AdminPage = () => {
                          <td className="px-6 py-4">
                             <select 
                               value={o.status}
-                              onChange={(e) => handleUpdateOrder(o.id, { status: e.target.value })}
+                              onChange={(e) => {
+                                const nextStatus = e.target.value;
+                                const stepIndex = ORDER_STEPS.findIndex((s) => s.id === nextStatus);
+                                handleUpdateOrder(o.id, { status: nextStatus, progressStep: Math.max(stepIndex, 0) });
+                              }}
                               className="bg-slate-100 border-none rounded-lg px-2 py-1 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20"
                             >
-                              {['pending', 'confirmed', 'in_queue', 'processing', 'designing', 'developing', 'testing', 'revision', 'completed', 'cancelled'].map(s => (
-                                <option key={s} value={s}>{s.toUpperCase()}</option>
+                              {ORDER_STEPS.map((s) => (
+                                <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>
                               ))}
                             </select>
                          </td>
@@ -420,25 +542,11 @@ export const AdminPage = () => {
                            <div className="w-24 h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden">
                              <div 
                                className="h-full bg-emerald-500 rounded-full" 
-                               style={{ width: `${Math.min(100, (o.paidAmount/o.totalAmount)*100)}%` }} 
+                               style={{ width: `${o.totalAmount > 0 ? Math.min(100, (o.paidAmount / o.totalAmount) * 100) : 0}%` }} 
                              />
                            </div>
                          </td>
-                         <td className="px-6 py-4">
-                           <div className="flex items-center gap-2">
-                             <input 
-                               type="number"
-                               defaultValue={o.manualPriorityScore}
-                               onBlur={(e) => handleUpdateOrder(o.id, { manualPriorityScore: Number(e.target.value) })}
-                               className="w-12 bg-slate-50 border border-slate-200 rounded px-1 py-1 text-xs text-center font-bold"
-                               title="Priority Score"
-                             />
-                             <button className="p-2 text-slate-400 hover:text-emerald-600 transition-colors">
-                               <ChevronRight size={16} />
-                             </button>
-                           </div>
-                         </td>
-                       </tr>
+                         </tr>
                      ))}
                    </tbody>
                  </table>
@@ -481,3 +589,4 @@ export const AdminPage = () => {
     </div>
   );
 };
+

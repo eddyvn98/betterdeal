@@ -24,6 +24,8 @@ interface QueueViewerProps {
   upsellSuggestion?: UpsellSuggestion;
 }
 
+const formatVnd = (amount: number) => `${Math.max(0, Math.round(amount)).toLocaleString('en-US')} VND`;
+
 export const QueueViewer: React.FC<QueueViewerProps> = ({ 
   queueItems, 
   fomoMessages, 
@@ -80,7 +82,7 @@ export const QueueViewer: React.FC<QueueViewerProps> = ({
             const isUser = item.isUser;
             return (
               <motion.div
-                key={item.id || item.position}
+                key={`${item.position}-${item.createdAt}`}
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -117,7 +119,7 @@ export const QueueViewer: React.FC<QueueViewerProps> = ({
 
                 <div className="text-right">
                   <p className={`text-xs font-black ${isUser ? 'text-emerald-600' : 'text-slate-900'}`}>
-                    {(item.paidAmount / 1000000).toFixed(1)}M
+                    {formatVnd(item.paidAmount)}
                   </p>
                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">ĐÃ CỌC</p>
                 </div>

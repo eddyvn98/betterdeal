@@ -70,3 +70,26 @@ export const browsingTools: Tool[] = [
     ]
   }
 ];
+
+/**
+ * Định nghĩa Tool cho OpenAI / DeepSeek
+ */
+export const openAIBrowsingTools = [
+  {
+    type: "function",
+    function: {
+      name: "browse_url",
+      description: "Fetches and returns the text content of a given URL. Use this tool when the user provides a link to a website and you need to understand its content, design, or features.",
+      parameters: {
+        type: "object",
+        properties: {
+          url: {
+            type: "string",
+            description: "The full URL of the website to browse (must include http:// or https://)."
+          }
+        },
+        required: ["url"]
+      }
+    }
+  }
+];

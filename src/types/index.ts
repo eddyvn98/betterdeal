@@ -63,7 +63,7 @@ export interface LeadQualification {
   missingInfo: string[];
   nextQuestions: string[];
   confidence: 'low' | 'medium' | 'high';
-  dealStage: 'discovery' | 'qualified' | 'negotiation' | 'quoted' | 'closed';
+  dealStage: 'discovery' | 'qualified' | 'negotiation' | 'quoted' | 'won';
   readyToHandoff: boolean;
   adminSummary: string;
   isSharedExperience: boolean;

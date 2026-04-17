@@ -2,19 +2,93 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ai, buildDynamicContext, buildMessageContents, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
+import { ai, buildDynamicContext, buildMessageContents, buildOpenAIMessages, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
+import { callDeepSeek } from './ai/provider';
 import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperience, generateEmbedding } from './ai/knowledge';
-import { browsingTools, browse_url } from './ai/tools';
+import { browsingTools, openAIBrowsingTools, browse_url } from './ai/tools';
 import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding, getAllLeads } from './leadStore';
 import { notifyAdmin, setupBotMenu } from './notifier';
 import { handleExternalQuote } from './externalHandlers';
 import crypto from 'node:crypto';
 import { leadToMarkdown } from './ai/formatter';
 import { createOrder, getOrder, getOrderBySession, updateOrderStatus, updateOrderPriority, getAllOrders, getQueue, getPublicQueue, OrderStatus } from './orderService';
-import { processPaymentWebhook, verifySepaySignature, getAllPayments } from './paymentService';
+import { processPaymentWebhook, verifySepaySignature, getAllPayments, getPaymentHistoryByOrder } from './paymentService';
+import { LeadQualification } from '../src/types';
 
 const app = express();
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'fallback';
+
+const OPTION_QUOTE_MAP: Array<{ pattern: RegExp; amount: number; label: string }> = [
+  { pattern: /\b(option\s*1|opt\s*1|lite|gói\s*1)\b/i, amount: 7000000, label: 'Option 1 (Lite)' },
+  { pattern: /\b(option\s*2|opt\s*2|standard|gói\s*2)\b/i, amount: 12000000, label: 'Option 2 (Standard)' },
+  { pattern: /\b(option\s*3|opt\s*3|elite|gói\s*3)\b/i, amount: 40000000, label: 'Option 3 (Elite)' },
+];
+
+const detectSelectedOption = (text: string) => OPTION_QUOTE_MAP.find((item) => item.pattern.test(text));
+
+const USD_TO_VND_RATE = 26500;
+
+const parseNumericAmount = (raw: string): number => {
+  const cleaned = String(raw || '').replace(/[^0-9.,]/g, '');
+  if (!cleaned) return 0;
+
+  const normalized = cleaned.includes('.') && cleaned.includes(',')
+    ? cleaned.replace(/,/g, '')
+    : cleaned.replace(/,/g, '.');
+
+  const amount = Number.parseFloat(normalized);
+  return Number.isFinite(amount) ? amount : 0;
+};
+
+const parseAmountFromText = (text: string): number => {
+  const normalizedText = String(text || '');
+  if (!normalizedText.trim()) return 0;
+
+  const containsUsd = /\$|\busd\b/i.test(normalizedText);
+  const amount = parseNumericAmount(normalizedText);
+  if (amount <= 0) return 0;
+
+  if (containsUsd) return Math.round(amount * USD_TO_VND_RATE);
+  return Math.round(amount);
+};
+
+const inferLeadForClosing = (lead: LeadQualification, userMessage: string): LeadQualification => {
+  const option = detectSelectedOption(userMessage);
+  const hasContact = Boolean(lead.contactValue || lead.contactName);
+
+  if (!option || !hasContact) return lead;
+
+  if (!lead.estimatedQuote || String(lead.estimatedQuote).trim() === '') {
+    lead.estimatedQuote = `${option.amount.toLocaleString('vi-VN')} VND`;
+  }
+
+  lead.readyToHandoff = true;
+  if (lead.dealStage === 'discovery' || lead.dealStage === 'qualified') {
+    lead.dealStage = 'quoted';
+  }
+  if (!lead.projectSummary || String(lead.projectSummary).trim() === '') {
+    lead.projectSummary = `Khách đã chọn ${option.label} và để lại thông tin liên hệ`;
+  }
+  if (!lead.adminSummary || String(lead.adminSummary).trim() === '') {
+    lead.adminSummary = `Khách chọn ${option.label}. Cần liên hệ ngay để xác nhận triển khai và đặt cọc.`;
+  }
+
+  return lead;
+};
+
+const parseOrderAmount = (estimatedQuote: string, userMessage: string, budget: string): number => {
+  const selected = detectSelectedOption(userMessage) || detectSelectedOption(estimatedQuote || '');
+  if (selected) return selected.amount;
+
+  const quoteAmount = parseAmountFromText(estimatedQuote);
+  if (quoteAmount >= 100000) return quoteAmount;
+
+  const messageAmount = parseAmountFromText(userMessage);
+  if (messageAmount >= 100000) return messageAmount;
+
+  const budgetAmount = parseAmountFromText(budget);
+  return budgetAmount >= 100000 ? budgetAmount : 0;
+};
 
 // Helper to verify admin token
 const verifyAdminAuth = (auth: string, sessionId?: string) => {
@@ -71,13 +145,22 @@ app.get('/api/admin/verify', (req, res) => {
 });
 
 app.get('/api/admin/leads', (req, res) => {
-  const { auth } = req.query;
-  if (!verifyAdminAuth(String(auth))) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  const { auth, sessionId } = req.query;
+  const authStr = String(auth || '');
+  const sid = sessionId ? String(sessionId) : undefined;
+
+  // Master token: can view all leads
+  if (verifyAdminAuth(authStr)) {
+    return res.json(getAllLeads());
   }
-  
-  const leads = getAllLeads();
-  return res.json(leads);
+
+  // Session token: only view its own lead summary
+  if (sid && verifyAdminAuth(authStr, sid)) {
+    const lead = getAllLeads().find((item) => item.sessionId === sid);
+    return res.json(lead ? [lead] : []);
+  }
+
+  return res.status(401).json({ error: 'Unauthorized' });
 });
 
 app.get('/api/admin/leads/:id', (req, res) => {
@@ -126,6 +209,7 @@ app.get('/api/orders/:ticket', (req, res) => {
   
   res.json({
     ...order,
+    queuePosition: publicQueueData.userPosition,
     publicQueue: publicQueueData.items,
     fomoMessages: publicQueueData.fomoMessages,
     upsellSuggestion: publicQueueData.upsellSuggestion,
@@ -152,23 +236,83 @@ app.post('/api/webhooks/sepay', async (req, res) => {
 });
 
 app.get('/api/admin/orders', (req, res) => {
-  const { auth } = req.query;
-  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
-  res.json(getAllOrders());
+  const { auth, sessionId } = req.query;
+  const authStr = String(auth || '');
+  const sid = sessionId ? String(sessionId) : undefined;
+
+  if (verifyAdminAuth(authStr)) {
+    return res.json(getAllOrders());
+  }
+
+  if (sid && verifyAdminAuth(authStr, sid)) {
+    const scoped = getAllOrders().filter((order) => order.sessionId === sid);
+    return res.json(scoped);
+  }
+
+  return res.status(401).json({ error: 'Unauthorized' });
 });
 
 app.get('/api/admin/payments', (req, res) => {
+  const { auth, sessionId } = req.query;
+  const authStr = String(auth || '');
+  const sid = sessionId ? String(sessionId) : undefined;
+
+  if (verifyAdminAuth(authStr)) {
+    return res.json(getAllPayments());
+  }
+
+  if (sid && verifyAdminAuth(authStr, sid)) {
+    const scopedOrders = getAllOrders()
+      .filter((order) => order.sessionId === sid)
+      .map((order) => order.id);
+
+    if (scopedOrders.length === 0) return res.json([]);
+
+    const scopedSet = new Set(scopedOrders);
+    const scopedPayments = getAllPayments().filter((payment: any) => scopedSet.has(payment.order_id));
+    return res.json(scopedPayments);
+  }
+
+  return res.status(401).json({ error: 'Unauthorized' });
+});
+
+app.get('/api/admin/orders/by-session/:sessionId', (req, res) => {
+  const { sessionId } = req.params;
   const { auth } = req.query;
-  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
-  res.json(getAllPayments());
+  const authStr = String(auth || '');
+  const isMaster = verifyAdminAuth(authStr);
+  const isSessionToken = verifyAdminAuth(authStr, sessionId);
+
+  if (!isMaster && !isSessionToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const order = getOrderBySession(sessionId);
+  if (!order) {
+    return res.json({ order: null, payments: [] });
+  }
+
+  const payments = getPaymentHistoryByOrder(order.id);
+  return res.json({ order, payments });
 });
 
 app.patch('/api/admin/orders/:id', (req, res) => {
   const { id } = req.params;
-  const { auth } = req.query;
+  const { auth, sessionId } = req.query;
   const { status, progressStep, manualPriorityScore } = req.body;
+  const authStr = String(auth || '');
+  const sid = sessionId ? String(sessionId) : undefined;
+  const isMaster = verifyAdminAuth(authStr);
 
-  if (!verifyAdminAuth(String(auth))) return res.status(401).json({ error: 'Unauthorized' });
+  if (!isMaster) {
+    if (!sid || !verifyAdminAuth(authStr, sid)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const order = getOrder(id);
+    if (!order || order.sessionId !== sid) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+  }
 
   if (status) updateOrderStatus(id, status as OrderStatus, progressStep);
   if (manualPriorityScore !== undefined) updateOrderPriority(id, Number(manualPriorityScore));
@@ -214,64 +358,68 @@ app.post('/api/chat', async (req, res) => {
 
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Chat start (Session: ${sessionId}, Model: ${modelName})`);
     
-    const contents = [
-      { role: 'user', parts: [{ text: `KNOWLEDGE BASE: ${kbContext}\n\nCONTEXT: ${leadContext}` }] },
-      { role: 'model', parts: [{ text: 'Understood. I will use the company knowledge and lead context for my response.' }] },
-      ...conversationHistory
-    ];
-
-    // Lượt gọi đầu tiên với Tools (không ép JSON vì Gemini không cho phép kết hợp cả hai trong 1 lượt nếu có functionCall)
-    let response = await ai.models.generateContent({
-      model: modelName,
-      contents,
-      config: {
-        ...cachedConfig,
-        tools: browsingTools,
-      },
-    });
-
-    // Vòng lặp xử lý Function Calling
+    let rawText = '';
     let callCount = 0;
-    while (response.candidates?.[0]?.content?.parts?.some(p => p.functionCall) && callCount < 3) {
-      callCount++;
-      const parts = response.candidates[0].content.parts;
-      const functionCalls = parts.filter(p => p.functionCall);
-      
-      contents.push({ role: 'model', parts: response.candidates[0].content.parts as any });
 
-      const responseParts = [];
-      for (const call of functionCalls) {
-        if (call.functionCall?.name === 'browse_url') {
-          const url = (call.functionCall.args as any).url;
-          const result = await browse_url(url);
-          
-          // Tách screenshot ra khỏi nội dung văn bản để gửi riêng dưới dạng inlineData
-          const { screenshot, ...textContent } = result;
-          
-          responseParts.push({
-            functionResponse: {
-              name: 'browse_url',
-              response: { content: textContent }
-            }
-          });
+    if (modelName.includes('deepseek')) {
+      // --- DEEPSEEK (OPENAI COMPATIBLE) FLOW ---
+      const messages: any[] = [
+        { role: 'system', content: (cachedConfig as any).systemInstruction },
+        { role: 'user', content: `KNOWLEDGE BASE: ${kbContext}\n\nCONTEXT: ${leadContext}` },
+        { role: 'assistant', content: 'Understood. I will use the company knowledge and lead context for my response.' },
+        ...buildOpenAIMessages(history)
+      ];
 
-          // Nếu có ảnh chụp màn hình, gửi kèm cho AI để phân tích Vision
-          if (screenshot) {
-            console.log(`[${new Date().toLocaleTimeString()}] [SYSTEM] Sending screenshot to AI for vision analysis...`);
-            responseParts.push({
-              inlineData: {
-                mimeType: 'image/jpeg',
-                data: screenshot
-              }
+      let response = await callDeepSeek(messages, {
+        tools: openAIBrowsingTools,
+        tool_choice: 'auto'
+      });
+
+      // Tool Call Loop
+      while (response.choices[0].message.tool_calls && callCount < 3) {
+        callCount++;
+        const toolCalls = response.choices[0].message.tool_calls;
+        messages.push(response.choices[0].message);
+
+        for (const toolCall of toolCalls) {
+          if (toolCall.function.name === 'browse_url') {
+            const args = JSON.parse(toolCall.function.arguments);
+            const result = await browse_url(args.url);
+            
+            // OpenAI/DeepSeek doesn't support Vision in V3, so we only send back text
+            const { screenshot, ...textContent } = result;
+            
+            messages.push({
+              role: 'tool',
+              tool_call_id: toolCall.id,
+              content: JSON.stringify(textContent)
             });
           }
         }
+
+        response = await callDeepSeek(messages, {
+          tools: openAIBrowsingTools
+        });
       }
 
-      contents.push({ role: 'user', parts: responseParts });
+      rawText = response.choices[0].message.content || '';
       
-      // Lượt gọi tiếp theo để AI xử lý kết quả từ hàm
-      response = await ai.models.generateContent({
+      // If DeepSeek didn't return JSON but we need it, we could do a follow-up
+      if (rawText && !rawText.includes('{')) {
+        messages.push({ role: 'user', content: 'Please output your response in the required JSON format.' });
+        const jsonResponse = await callDeepSeek(messages, { response_format: { type: 'json_object' } });
+        rawText = jsonResponse.choices[0].message.content;
+      }
+
+    } else {
+      // --- GEMINI FLOW ---
+      const contents = [
+        { role: 'user', parts: [{ text: `KNOWLEDGE BASE: ${kbContext}\n\nCONTEXT: ${leadContext}` }] },
+        { role: 'model', parts: [{ text: 'Understood. I will use the company knowledge and lead context for my response.' }] },
+        ...conversationHistory
+      ];
+
+      let response = await (ai as any).models.generateContent({
         model: modelName,
         contents,
         config: {
@@ -279,32 +427,72 @@ app.post('/api/chat', async (req, res) => {
           tools: browsingTools,
         },
       });
-    }
 
-    // Lượt gọi cuối cùng để bắt buộc trả về định dạng JSON (Structured Lead Data)
-    if (!response.candidates?.[0]?.content?.parts?.find(p => p.text?.includes('{'))) {
-      response = await ai.models.generateContent({
-        model: modelName,
-        contents,
-        config: {
-          ...cachedConfig,
-          responseMimeType: 'application/json',
-          ...DEFAULT_GEN_CONFIG,
-        },
-      });
+      while (response.candidates?.[0]?.content?.parts?.some(p => p.functionCall) && callCount < 3) {
+        callCount++;
+        const parts = response.candidates[0].content.parts;
+        const functionCalls = parts.filter(p => p.functionCall);
+        
+        contents.push({ role: 'model', parts: response.candidates[0].content.parts as any });
+
+        const responseParts = [];
+        for (const call of functionCalls) {
+          if (call.functionCall?.name === 'browse_url') {
+            const url = (call.functionCall.args as any).url;
+            const result = await browse_url(url);
+            const { screenshot, ...textContent } = result;
+            
+            responseParts.push({
+              functionResponse: {
+                name: 'browse_url',
+                response: { content: textContent }
+              }
+            });
+
+            if (screenshot) {
+              responseParts.push({
+                inlineData: { mimeType: 'image/jpeg', data: screenshot }
+              });
+            }
+          }
+        }
+
+        contents.push({ role: 'user', parts: responseParts });
+        
+        response = await (ai as any).models.generateContent({
+          model: modelName,
+          contents,
+          config: {
+            ...cachedConfig,
+            tools: browsingTools,
+          },
+        });
+      }
+
+      if (!response.candidates?.[0]?.content?.parts?.find(p => p.text?.includes('{'))) {
+        response = await (ai as any).models.generateContent({
+          model: modelName,
+          contents,
+          config: {
+            ...cachedConfig,
+            responseMimeType: 'application/json',
+            ...DEFAULT_GEN_CONFIG,
+          },
+        });
+      }
+      rawText = response.text || '';
     }
 
     const responseTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    const rawText = response.text || '';
     
     if (!rawText) {
-      console.warn(`[${new Date().toLocaleTimeString()}] [API-WARNING] Empty response from Gemini (Session: ${sessionId})`);
-      console.debug('Response candidates:', JSON.stringify(response.candidates, null, 2));
+      console.warn(`[${new Date().toLocaleTimeString()}] [API-WARNING] Empty response from AI (Session: ${sessionId})`);
     }
 
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Chat success (${responseTime}s, Knowledge: ${relevantKB.length}, Tool calls: ${callCount})`);
 
     const parsed = normalizeChallengeResponse(rawText);
+    parsed.lead = inferLeadForClosing(parsed.lead, message);
     addMessage(sessionId, 'model', parsed.reply);
     upsertLead(sessionId, parsed.lead);
 
@@ -338,12 +526,11 @@ app.post('/api/chat', async (req, res) => {
 
     // Check for deal closure and generate Order
     let order = null;
-    if (parsed.lead.dealStage === 'closed' || (parsed.lead.readyToHandoff && parsed.lead.estimatedQuote)) {
+    if (parsed.lead.dealStage === 'won' || (parsed.lead.readyToHandoff && parsed.lead.estimatedQuote)) {
       const existingOrder = getOrderBySession(sessionId);
       if (!existingOrder) {
         // Parse quote to number
-        const amountStr = parsed.lead.estimatedQuote.replace(/[^0-9]/g, '');
-        const amount = parseInt(amountStr) || 0;
+        const amount = parseOrderAmount(parsed.lead.estimatedQuote, message, parsed.lead.budget);
         
         if (amount > 0) {
           order = createOrder(sessionId, parsed.lead.projectSummary, amount);

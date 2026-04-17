@@ -117,6 +117,69 @@ try {
   if (!hasAttachments) {
     db.exec("ALTER TABLE messages ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'");
   }
+
+  // Backfill legacy orders with broken total_amount (e.g. 1, 2, 100 from old parser)
+  const USD_TO_VND_RATE = 26500;
+  const lowAmountOrders = db.prepare(`
+    SELECT o.id, o.session_id, o.total_amount, l.estimated_quote, l.budget
+    FROM orders o
+    LEFT JOIN leads l ON l.session_id = o.session_id
+    WHERE o.total_amount > 0 AND o.total_amount < 100000
+  `).all() as any[];
+
+  const detectOptionAmount = (text: string): number => {
+    const normalized = String(text || '').toLowerCase();
+    if (/\b(option\s*1|opt\s*1|lite|gói\s*1)\b/i.test(normalized)) return 7000000;
+    if (/\b(option\s*2|opt\s*2|standard|gói\s*2)\b/i.test(normalized)) return 12000000;
+    if (/\b(option\s*3|opt\s*3|elite|gói\s*3)\b/i.test(normalized)) return 40000000;
+    return 0;
+  };
+
+  const roundVND = (amount: number): number => {
+    return Math.round(amount / 50000) * 50000;
+  };
+
+  const roundUSD = (amount: number): number => {
+    return Math.round(amount * 2) / 2;
+  };
+
+  const parseNumericAmount = (raw: string): number => {
+    const cleaned = String(raw || '').replace(/[^0-9.,]/g, '');
+    if (!cleaned) return 0;
+    const normalized = cleaned.includes('.') && cleaned.includes(',')
+      ? cleaned.replace(/,/g, '')
+      : cleaned.replace(/,/g, '.');
+    const amount = Number.parseFloat(normalized);
+    return Number.isFinite(amount) ? amount : 0;
+  };
+
+  const parseAmountFromText = (text: string): number => {
+    const normalizedText = String(text || '');
+    if (!normalizedText.trim()) return 0;
+    const optionAmount = detectOptionAmount(normalizedText);
+    if (optionAmount > 0) return optionAmount;
+
+    const containsUsd = /\$|\busd\b/i.test(normalizedText);
+    let amount = parseNumericAmount(normalizedText);
+    if (amount <= 0) return 0;
+    
+    if (containsUsd) {
+      amount = roundUSD(amount);
+      return Math.round(amount * USD_TO_VND_RATE);
+    }
+    
+    return roundVND(amount);
+  };
+
+  const updateOrderAmountStmt = db.prepare('UPDATE orders SET total_amount = ?, updated_at = ? WHERE id = ?');
+  for (const row of lowAmountOrders) {
+    const inferredFromQuote = parseAmountFromText(String(row.estimated_quote || ''));
+    const inferredFromBudget = parseAmountFromText(String(row.budget || ''));
+    const inferred = inferredFromQuote || inferredFromBudget;
+    if (inferred >= 100000) {
+      updateOrderAmountStmt.run(inferred, new Date().toISOString(), row.id);
+    }
+  }
 } catch (e) {
   console.warn('Migration warning:', e);
 }

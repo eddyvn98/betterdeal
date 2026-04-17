@@ -1,24 +1,25 @@
-# Stage 1: Build the UI
-FROM node:22-alpine AS builder
+# Stage 1: Install dependencies with retries (network-safe)
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN sh -lc "for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo \"npm ci failed (attempt $i), retrying...\"; sleep 5; done; exit 1"
+
+# Stage 2: Build UI assets
+FROM deps AS builder
+WORKDIR /app
 COPY . .
 RUN npm run build
 
-# Stage 2: Runtime
-FROM node:22-alpine
+# Stage 3: Runtime
+# Reuse the deps layer directly so Docker does not spend minutes copying node_modules
+FROM deps AS runtime
 WORKDIR /app
-# Cài đặt các công cụ cần thiết cho server (bao gồm tsx nếu dùng trực tiếp)
-COPY package*.json ./
-RUN npm install
+ENV NODE_ENV=production
 
 COPY . .
-# Copy kết quả build UI vào thư mục dist
 COPY --from=builder /app/dist ./dist
 
-# Port mặc định của project
 EXPOSE 8787
 
-# Chạy server API (phục vụ cả static files)
-CMD ["npm", "run", "dev:api"]
+# Run API server as a single process in container (avoid watch-mode multi-process locks)
+CMD ["node", "node_modules/tsx/dist/cli.mjs", "server/index.ts"]

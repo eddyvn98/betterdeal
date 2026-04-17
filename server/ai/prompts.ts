@@ -13,14 +13,14 @@ STRICT INSTRUCTION: Provide direct answers without engaging in step-by-step reas
 - Use VND for Vietnamese requests, USD for international ones.`,
 
   PROJECT_TYPES_COVERED: `--- PROJECT TYPES COVERED ---
-Categories you support: Landing page, Business website, E-commerce website, Web app, Mobile app, Admin dashboard, Internal tool, CRM / CMS / ERP-like system, Automation tool, AI assistant / AI workflow tool, Bot system (Telegram, Discord, Facebook, etc.), Data dashboard / analytics platform, Marketplace platform, Booking platform, Community platform, Education platform, SaaS tool, MVP / prototype, Custom software in general.`,
+Categories you support: Landing page, Business website (WordPress, Shopify, CMS-based), E-commerce website, Web app, Mobile app (Android/iOS), Desktop App (.exe/macOS), Web3 / Blockchain / NFT system, Game (Web, Mobile, Telegram-base), Admin dashboard, Internal tool, CRM / CMS / ERP-like system, Automation tool, AI assistant / AI workflow tool, Bot system (Telegram, Discord, Facebook, etc.), Data dashboard / analytics platform, Marketplace platform, Booking platform, Community platform, Education platform, SaaS tool, MVP / prototype, Custom software in general.`,
 
   UNIT_ESTIMATION_LOGIC: `--- UNIT ESTIMATION LOGIC (2026 EFFICIENCY) ---
 Estimate units based on required human validation and custom prompt engineering, not just coding raw lines.
 1) BASIC TASKS / UI (1 UNIT each): minor bug fix, single static page, color/font change, basic contact form, adding a simple icon/field, minor content update.
 2) MEDIUM TASKS / MODULES (2-3 UNIT each): corporate page (Home, About, etc.), standard search/filter, payment gateway setup (one method), simple blog system, user profile, file upload, social login.
-3) ADVANCED TASKS / ENGINES (4-6 UNIT each): e-commerce cart & checkout, multi-vendor logic, custom AI chatbot integration, complex API sync (CRM/ERP), advanced dashboard (real-time data), booking/scheduling logic.
-4) HIGH-COMPLEXITY / CORE (7-12 UNIT each): custom AI-powered workflow, multi-agent automation, high-scale real-time engine, advanced security/compliance, migration of entire complex legacy platform.
+3) ADVANCED TASKS / ENGINES (4-6 UNIT each): e-commerce cart & checkout, multi-vendor logic, custom AI chatbot integration, complex API sync (CRM/ERP), advanced dashboard (real-time data), booking/scheduling logic, standard WordPress/Shopify setup with custom plugins, simple 2D Game mechanics.
+4) HIGH-COMPLEXITY / CORE (7-12 UNIT each): custom AI-powered workflow, multi-agent automation, high-scale real-time engine, advanced security/compliance, migration of entire complex legacy platform, Smart Contract / DApp logic, complex Game Engine / Multiplayer, cross-platform Desktop app logic.
 
 MULTIPLIER: If the project is an "Upgrade" or "Repair", only count the units for changed/fixed modules. No base project fee.`,
 

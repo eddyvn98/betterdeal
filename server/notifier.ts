@@ -33,6 +33,7 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
   let reported = false;
 
   if (telegramBotToken && telegramChatId) {
+    const masterToken = crypto.createHmac('sha256', process.env.ADMIN_SECRET || 'fallback').update('MASTER_ADMIN').digest('hex');
     const telegramResponse = await fetch('https://api.telegram.org/bot' + telegramBotToken + '/sendMessage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -45,7 +46,7 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
             [
               {
                 text: '📜 Mở Hồ Sơ Triển Khai',
-                url: `${process.env.APP_URL}/admin?auth=${crypto.createHmac('sha256', process.env.ADMIN_SECRET || 'fallback').update(sessionId).digest('hex')}&sessionId=${sessionId}`
+                url: `${process.env.APP_URL}/admin?auth=${masterToken}&sessionId=${sessionId}`
               }
             ]
           ]
@@ -56,7 +57,8 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
     if (telegramResponse.ok) {
       reported = true;
     } else {
-      console.error('Telegram notify failed:', telegramResponse.status);
+      const errorBody = await telegramResponse.text();
+      console.error('Telegram notify failed:', telegramResponse.status, errorBody);
     }
   }
 
@@ -70,7 +72,8 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
     if (zaloResponse.ok) {
       reported = true;
     } else {
-      console.error('Zalo relay failed:', zaloResponse.status);
+      const errorBody = await zaloResponse.text();
+      console.error('Zalo relay failed:', zaloResponse.status, errorBody);
     }
   }
 
@@ -78,6 +81,11 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
   // if console log was successful.
   if (!reported) {
     console.log('Note: No Telegram/Zalo configured. Notification logged to console only.');
+  }
+
+  const hasConfiguredChannel = Boolean((telegramBotToken && telegramChatId) || zaloWebhookUrl);
+  if (hasConfiguredChannel && !reported) {
+    throw new Error('All configured admin notification channels failed');
   }
 };
 

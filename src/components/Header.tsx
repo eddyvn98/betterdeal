@@ -35,6 +35,9 @@ export const Header = () => {
           <Link to="/projects" className="font-semibold transition-colors hover:text-emerald-600">
             {t('header.projects')}
           </Link>
+          <Link to="/tracking" className="font-semibold transition-colors hover:text-emerald-600">
+            {isVi ? 'Theo dõi đơn' : 'Track Order'}
+          </Link>
           <a
             href="/#challenge"
             className="rounded-full border border-emerald-600/30 bg-emerald-50 px-3 py-1 font-bold text-emerald-600 transition-colors hover:text-emerald-700"

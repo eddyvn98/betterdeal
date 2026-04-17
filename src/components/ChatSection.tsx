@@ -70,7 +70,7 @@ interface ChatSectionProps {
   adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
   onResetSession: () => void;
   onVisibilityChange?: (inView: boolean) => void;
-  onOpenGame: void;
+  onOpenGame: () => void;
   onFilesAttached: (files: File[]) => void;
   order?: { id: string; status: string } | null;
 }
@@ -248,7 +248,7 @@ export const ChatSection = ({
                 className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl border border-slate-200 text-slate-400 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
                 title={t('chat.reset')}
               >
-                <RotateCcw size={16} md:size={20} />
+                <RotateCcw size={16} className="md:h-5 md:w-5" />
               </motion.button>
             </div>
           </div>

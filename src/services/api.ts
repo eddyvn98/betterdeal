@@ -53,8 +53,9 @@ export const fetchSessionState = async (sessionId: string): Promise<{
   return response.json();
 };
 
-export const fetchAdminLeads = async (auth: string): Promise<any[]> => {
-  const response = await fetch(`${API_BASE}/admin/leads?auth=${auth}`);
+export const fetchAdminLeads = async (auth: string, sessionId?: string): Promise<any[]> => {
+  const query = sessionId ? `?auth=${encodeURIComponent(auth)}&sessionId=${encodeURIComponent(sessionId)}` : `?auth=${encodeURIComponent(auth)}`;
+  const response = await fetch(`${API_BASE}/admin/leads${query}`);
   if (!response.ok) throw new Error('Unauthorized');
   return response.json();
 };
@@ -65,14 +66,20 @@ export const fetchAdminLeadDetail = async (id: string, auth: string): Promise<an
   return response.json();
 };
 
-export const fetchAdminOrders = async (auth: string): Promise<any[]> => {
-  const response = await fetch(`${API_BASE}/admin/orders?auth=${auth}`);
+export const fetchAdminOrders = async (auth: string, sessionId?: string): Promise<any[]> => {
+  const query = sessionId
+    ? `?auth=${encodeURIComponent(auth)}&sessionId=${encodeURIComponent(sessionId)}`
+    : `?auth=${encodeURIComponent(auth)}`;
+  const response = await fetch(`${API_BASE}/admin/orders${query}`);
   if (!response.ok) throw new Error('Unauthorized');
   return response.json();
 };
 
-export const updateAdminOrder = async (id: string, auth: string, payload: any): Promise<any> => {
-  const response = await fetch(`${API_BASE}/admin/orders/${id}?auth=${auth}`, {
+export const updateAdminOrder = async (id: string, auth: string, payload: any, sessionId?: string): Promise<any> => {
+  const query = sessionId
+    ? `?auth=${encodeURIComponent(auth)}&sessionId=${encodeURIComponent(sessionId)}`
+    : `?auth=${encodeURIComponent(auth)}`;
+  const response = await fetch(`${API_BASE}/admin/orders/${id}${query}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -81,8 +88,17 @@ export const updateAdminOrder = async (id: string, auth: string, payload: any): 
   return response.json();
 };
 
-export const fetchAdminPayments = async (auth: string): Promise<any[]> => {
-  const response = await fetch(`${API_BASE}/admin/payments?auth=${auth}`);
+export const fetchAdminPayments = async (auth: string, sessionId?: string): Promise<any[]> => {
+  const query = sessionId
+    ? `?auth=${encodeURIComponent(auth)}&sessionId=${encodeURIComponent(sessionId)}`
+    : `?auth=${encodeURIComponent(auth)}`;
+  const response = await fetch(`${API_BASE}/admin/payments${query}`);
+  if (!response.ok) throw new Error('Unauthorized');
+  return response.json();
+};
+
+export const fetchAdminOrderBundleBySession = async (sessionId: string, auth: string): Promise<{ order: any | null; payments: any[] }> => {
+  const response = await fetch(`${API_BASE}/admin/orders/by-session/${encodeURIComponent(sessionId)}?auth=${encodeURIComponent(auth)}`);
   if (!response.ok) throw new Error('Unauthorized');
   return response.json();
 };

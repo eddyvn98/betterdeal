@@ -37,6 +37,12 @@ const parseJsonArray = (value: string): string[] => {
   }
 };
 
+const normalizeDealStage = (value: string): LeadQualification['dealStage'] => {
+  if (value === 'closed') return 'won';
+  const allowed: LeadQualification['dealStage'][] = ['discovery', 'qualified', 'negotiation', 'quoted', 'won'];
+  return allowed.includes(value as LeadQualification['dealStage']) ? (value as LeadQualification['dealStage']) : 'discovery';
+};
+
 export const createSession = () => {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -95,7 +101,7 @@ export const getLead = (sessionId: string): LeadQualification => {
     missingInfo: parseJsonArray(String(row.missing_info_json ?? '[]')),
     nextQuestions: parseJsonArray(String(row.next_questions_json ?? '[]')),
     confidence: String(row.confidence ?? 'low') as LeadQualification['confidence'],
-    dealStage: String(row.deal_stage ?? 'discovery') as LeadQualification['dealStage'],
+    dealStage: normalizeDealStage(String(row.deal_stage ?? 'discovery')),
     readyToHandoff: Boolean(row.ready_to_handoff),
     isSharedExperience: Boolean(row.is_shared_experience),
     adminSummary: String(row.admin_summary ?? ''),
@@ -151,7 +157,7 @@ export const upsertLead = (sessionId: string, lead: LeadQualification) => {
     JSON.stringify(lead.missingInfo),
     JSON.stringify(lead.nextQuestions),
     lead.confidence,
-    lead.dealStage,
+    normalizeDealStage(lead.dealStage),
     lead.readyToHandoff ? 1 : 0,
     lead.isSharedExperience ? 1 : 0,
     lead.adminSummary,
@@ -214,7 +220,7 @@ export const getAllLeads = (): LeadSummary[] => {
     projectSummary: row.project_summary,
     contactName: row.contact_name,
     contactValue: row.contact_value,
-    dealStage: row.deal_stage,
+    dealStage: row.deal_stage === 'closed' ? 'won' : row.deal_stage,
     updatedAt: row.updated_at,
     adminStatus: row.admin_status
   }));

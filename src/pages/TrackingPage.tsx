@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Package, CheckCircle2, Clock, CreditCard, 
@@ -24,6 +24,8 @@ interface OrderDetail {
   totalInQueue: number;
 }
 
+const formatVnd = (amount: number) => `${Math.max(0, Math.round(amount)).toLocaleString('en-US')} VND`;
+
 const STEPS = [
   { id: 'pending', label: 'Chờ duyệt', icon: Clock },
   { id: 'confirmed', label: 'Xác nhận', icon: CheckCircle2 },
@@ -38,6 +40,8 @@ const STEPS = [
 
 export const TrackingPage = () => {
   const { ticket } = useParams<{ ticket: string }>();
+  const navigate = useNavigate();
+  const [ticketInput, setTicketInput] = useState('');
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +74,38 @@ export const TrackingPage = () => {
     }
   };
 
+  if (!ticket) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-xl rounded-[2rem] border border-slate-100 bg-white p-8 shadow-xl">
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Tra cứu đơn hàng</h1>
+          <p className="text-slate-500 mb-6">Dán mã ticket để theo dõi tiến độ và thanh toán đặt cọc.</p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              value={ticketInput}
+              onChange={(e) => setTicketInput(e.target.value.toUpperCase())}
+              placeholder="Ví dụ: PX20260417074480B343"
+              className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-emerald-400"
+            />
+            <button
+              onClick={() => {
+                const normalized = ticketInput.trim();
+                if (!normalized) return;
+                navigate(`/tracking/${normalized}`);
+              }}
+              className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white hover:bg-emerald-700 transition-colors"
+            >
+              Theo dõi
+            </button>
+          </div>
+          <Link to="/" className="inline-flex items-center gap-1 text-slate-500 hover:text-emerald-600 transition-colors mt-5 text-sm font-medium">
+            <ArrowLeft className="w-4 h-4" /> Quay lại trang chủ
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (loading && !order) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -95,10 +131,16 @@ export const TrackingPage = () => {
 
   const currentStepIndex = STEPS.findIndex(s => s.id === order.status);
   const progressPercent = ((currentStepIndex + 1) / STEPS.length) * 100;
+  const recommendedDepositTarget = order.totalAmount <= 3000000
+    ? Math.round(order.totalAmount * 0.4)
+    : order.totalAmount <= 15000000
+      ? Math.round(order.totalAmount * 0.35)
+      : Math.round(order.totalAmount * 0.3);
+  const remainingAmount = Math.max(0, order.totalAmount - order.paidAmount);
 
   // Generate SePay QR URL
   // Format: https://qr.sepay.vn/img?acc=ACCOUNT_NUMBER&bank=BANK_NAME&amount=AMOUNT&des=TICKET_ID
-  const qrUrl = `https://qr.sepay.vn/img?acc=0338871927&bank=MBBank&amount=${Math.max(0, order.totalAmount * 0.3 - order.paidAmount)}&des=${order.id}`;
+  const qrUrl = `https://qr.sepay.vn/img?acc=0338871927&bank=MBBank&amount=${Math.max(0, recommendedDepositTarget - order.paidAmount)}&des=${order.id}`;
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -224,14 +266,14 @@ export const TrackingPage = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-bold">Còn lại:</span>
                   <span className="text-2xl font-black">
-                    {((order.totalAmount - order.paidAmount) / 1000000).toFixed(1)}M <span className="text-xs">VNĐ</span>
+                    {(remainingAmount / 1000000).toFixed(1)}M <span className="text-xs">VNĐ</span>
                   </span>
                 </div>
               </div>
 
               {order.paidAmount < order.totalAmount && (
                 <div className="mt-8 bg-white rounded-3xl p-4 text-slate-900 border-4 border-emerald-500/50">
-                  <p className="text-[10px] uppercase font-black text-center text-slate-400 mb-3 tracking-widest">Quét mã đặt cọc (Min 30%)</p>
+                  <p className="text-[10px] uppercase font-black text-center text-slate-400 mb-3 tracking-widest">Quet ma dat coc (Khuyen nghi)</p>
                   <div className="aspect-square bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center p-2 border border-slate-100">
                     <img src={qrUrl} alt="SePay QR" className="w-full h-full object-contain" />
                   </div>

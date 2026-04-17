@@ -118,7 +118,7 @@ export async function searchExperience(query: string, limit: number = 2) {
   if (queryEmbedding.length === 0) return [];
 
   // Lấy danh sách các lead đã được đánh dấu là kinh nghiệm dùng chung
-  const rows = db.prepare('SELECT project_summary, project_type, estimated_quote, experience_embedding FROM leads WHERE is_shared_experience = 1 AND experience_embedding IS NOT NULL').all() as any[];
+  const rows = db.prepare('SELECT session_id, project_summary, project_type, estimated_quote, experience_embedding FROM leads WHERE is_shared_experience = 1 AND experience_embedding IS NOT NULL').all() as any[];
   
   const results = rows
     .map(row => {
@@ -138,10 +138,12 @@ export async function searchExperience(query: string, limit: number = 2) {
     .filter(item => item.score > 0.75) // Ngưỡng tương đồng cho kinh nghiệm (khắt khe hơn)
     .slice(0, limit);
 
-  return results.map(item => {
-    const lead = getLead(item.session_id);
-    return leadToMarkdown(lead, item.session_id);
-  });
+  return results
+    .filter(item => typeof item.session_id === 'string' && item.session_id.length > 0)
+    .map(item => {
+      const lead = getLead(item.session_id);
+      return leadToMarkdown(lead, item.session_id);
+    });
 }
 
 /**

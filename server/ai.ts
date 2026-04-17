@@ -50,6 +50,14 @@ const emptyLead: LeadQualification = {
   appliedDiscount: 0,
 };
 
+const normalizeDealStage = (value: unknown): LeadQualification['dealStage'] => {
+  if (value === 'closed') return 'won';
+  if (value === 'won' || value === 'quoted' || value === 'negotiation' || value === 'qualified' || value === 'discovery') {
+    return value;
+  }
+  return 'discovery';
+};
+
 /**
  * Lấy chỉ dẫn hệ thống cố định (để có thể cache)
  */
@@ -93,6 +101,17 @@ export const buildMessageContents = (history: Message[], attachments: string[] =
 };
 
 /**
+ * Chuyển đổi lịch sử sang định dạng OpenAI/DeepSeek
+ */
+export const buildOpenAIMessages = (history: Message[]) => {
+  const truncatedHistory = truncateHistory(history);
+  return truncatedHistory.map((msg) => ({
+    role: msg.role === 'user' ? 'user' : 'assistant',
+    content: msg.content
+  }));
+};
+
+/**
  * Chuẩn hóa và validate phản hồi từ AI
  */
 export const normalizeChallengeResponse = (rawText: string): ChallengeAIResponse => {
@@ -128,8 +147,12 @@ export const normalizeChallengeResponse = (rawText: string): ChallengeAIResponse
     console.warn('Zod Validation Warning (Partial match attempted):', validation.error.format());
     
     // Nỗ lực cứu vãn dữ liệu lead từ AI nếu có, thay vì dùng emptyLead nguyên bản
-    const partialLead = typeof parsedJson.lead === 'object' && parsedJson.lead !== null 
-      ? { ...emptyLead, ...parsedJson.lead }
+    const partialLead = typeof parsedJson.lead === 'object' && parsedJson.lead !== null
+      ? {
+          ...emptyLead,
+          ...parsedJson.lead,
+          dealStage: normalizeDealStage(parsedJson.lead.dealStage),
+        }
       : emptyLead;
 
     return {
