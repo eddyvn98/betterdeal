@@ -25,9 +25,10 @@ import { AISkeleton } from '../components/AISkeleton';
 
 interface ProjectDetailPageProps {
   projects: Project[];
+  isLoading?: boolean;
 }
 
-export const ProjectDetailPage = ({ projects }: ProjectDetailPageProps) => {
+export const ProjectDetailPage = ({ projects, isLoading = false }: ProjectDetailPageProps) => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -38,6 +39,7 @@ export const ProjectDetailPage = ({ projects }: ProjectDetailPageProps) => {
   const isEn = i18n.language.startsWith('en');
 
   useEffect(() => {
+    if (isLoading && projects.length === 0) return;
     const foundProject = projects.find((p) => p.slug === slug);
     if (foundProject) {
       setProject(foundProject);
@@ -90,7 +92,7 @@ export const ProjectDetailPage = ({ projects }: ProjectDetailPageProps) => {
       
       script.text = JSON.stringify(projectSchema);
 
-    } else {
+    } else if (!isLoading) {
       navigate('/projects');
     }
 
@@ -99,7 +101,7 @@ export const ProjectDetailPage = ({ projects }: ProjectDetailPageProps) => {
       const script = document.getElementById('project-schema-ld');
       if (script) script.remove();
     };
-  }, [slug, navigate, isEn]);
+  }, [slug, navigate, isEn, projects, isLoading, i18n.language]);
 
   if (!project) return null;
 

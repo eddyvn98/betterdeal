@@ -67,6 +67,7 @@ const App = () => {
   const [isChatVisible, setIsChatVisible] = useState(true);
   const [isGameOpen, setIsGameOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>(staticProjects);
+  const [isCMSLoading, setIsCMSLoading] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const activeChallengeRequestsRef = useRef(0);
   const sendLockRef = useRef(false);
@@ -160,8 +161,8 @@ const App = () => {
             return [...newFiltered, ...prev];
           });
         }
-      } catch (error) {
-        console.error('Failed to load CMS projects:', error);
+      } finally {
+        setIsCMSLoading(false);
       }
     };
 
@@ -427,7 +428,7 @@ const App = () => {
 
           <Route
             path="/projects/:slug"
-            element={<ProjectDetailPage projects={projects} />}
+            element={<ProjectDetailPage projects={projects} isLoading={isCMSLoading} />}
           />
 
           <Route
