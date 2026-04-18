@@ -14,6 +14,26 @@ export interface CMSProject {
     featured_image: string;
     content: any[]; // PortableText
     url?: string;
+    repoUrl?: string;
+    challenge?: string;
+    solution?: string;
+    results?: string;
+    deepDive?: {
+      architecture?: string;
+      coreChallenges?: string;
+      optimization?: string;
+    };
+    // English versions
+    titleEn?: string;
+    summaryEn?: string;
+    challengeEn?: string;
+    solutionEn?: string;
+    resultsEn?: string;
+    deepDiveEn?: {
+      architectureEn?: string;
+      coreChallengesEn?: string;
+      optimizationEn?: string;
+    };
   };
   taxonomies?: {
     category?: string[];

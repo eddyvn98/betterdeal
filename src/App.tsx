@@ -124,15 +124,33 @@ const App = () => {
             id: 1000 + index, // Generate numerical IDs for CMS projects to avoid collisions
             slug: p.slug || p.id,
             title: p.data?.title || 'Untitled',
+            titleEn: p.data?.titleEn,
             category: p.taxonomies?.category?.[0] || 'Uncategorized',
             stack: p.taxonomies?.tag || [],
             stars: 0,
             image: p.data?.featured_image || '',
             description: p.data?.summary || '',
+            descriptionEn: p.data?.summaryEn,
             longDescription: p.data?.summary || '',
+            longDescriptionEn: p.data?.summaryEn,
+            challenge: p.data?.challenge,
+            challengeEn: p.data?.challengeEn,
+            solution: p.data?.solution,
+            solutionEn: p.data?.solutionEn,
+            results: p.data?.results,
+            resultsEn: p.data?.resultsEn,
             liveUrl: p.data?.url,
+            repoUrl: p.data?.repoUrl,
             year: p.data?.year,
             featured: true, // Auto-feature CMS items
+            deepDive: p.data?.deepDive ? {
+              architecture: p.data.deepDive.architecture,
+              architectureEn: p.data.deepDiveEn?.architectureEn,
+              coreChallenges: p.data.deepDive.coreChallenges,
+              coreChallengesEn: p.data.deepDiveEn?.coreChallengesEn,
+              optimization: p.data.deepDive.optimization,
+              optimizationEn: p.data.deepDiveEn?.optimizationEn,
+            } : undefined,
           }));
           
           setProjects((prev) => {

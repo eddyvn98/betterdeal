@@ -13,3 +13,6 @@ coverage
 tmp
 temp
 data
+scratch
+# Exclude entire emdash-cms directory from Docker (runs on Cloudflare, not Docker)
+emdash-cms
