@@ -2,10 +2,10 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ai, buildDynamicContext, buildMessageContents, buildOpenAIMessages, dataUrlToPart, getCachedConfig, normalizeChallengeResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
+import { ai, buildDynamicContext, buildMessageContents, buildOpenAIMessages, dataUrlToPart, getCachedConfig, normalizeChatResponse, DEFAULT_MODEL, DEFAULT_GEN_CONFIG } from './ai';
 import { callDeepSeek } from './ai/provider';
 import { buildKnowledgeContext, initKnowledgeBase, searchKnowledge, searchExperience, generateEmbedding } from './ai/knowledge';
-import { browsingTools, openAIBrowsingTools, browse_url } from './ai/tools';
+import { browsingTools, openAIBrowsingTools, browse_url, web_search } from './ai/tools';
 import { addMessage, createSession, ensureSession, getAdminStatus, getLead, getMessages, setAdminStatus, upsertLead, saveExperienceEmbedding, getAllLeads } from './leadStore';
 import { notifyAdmin, setupBotMenu } from './notifier';
 import { handleExternalQuote } from './externalHandlers';
@@ -88,6 +88,35 @@ const parseOrderAmount = (estimatedQuote: string, userMessage: string, budget: s
 
   const budgetAmount = parseAmountFromText(budget);
   return budgetAmount >= 100000 ? budgetAmount : 0;
+};
+
+const EMERGING_TECH_REGEX =
+  /\b(mcp|model\s*context\s*protocol|a2a|agent[\s-]*to[\s-]*agent|langgraph|autogen|crewai|semantic\s*kernel|n8n|comfyui|llamaindex|vector\s*db|rag|ai\s*agent|agents?\s*sdk|durable\s*objects?|workers?\s*ai)\b/i;
+
+const hasEmergingTechSignal = (text: string): boolean => {
+  const msg = String(text || '').trim();
+  if (!msg) return false;
+  if (EMERGING_TECH_REGEX.test(msg)) return true;
+
+  // Fallback: detect uncommon uppercase acronyms (>=3 chars), excluding common noise.
+  const acronyms = msg.match(/\b[A-Z][A-Z0-9-]{2,}\b/g) || [];
+  const ignored = new Set(['VND', 'USD', 'CRM', 'CMS', 'ERP', 'API', 'SEO', 'UI', 'UX']);
+  return acronyms.some((token) => !ignored.has(token));
+};
+
+const buildWebSearchContext = (payload: any): string => {
+  if (!payload || payload.error || !Array.isArray(payload.results) || payload.results.length === 0) {
+    return '';
+  }
+
+  const lines = payload.results.slice(0, 3).map((item: any, index: number) => {
+    const title = item?.title || 'Untitled';
+    const url = item?.url || '';
+    const snippet = item?.snippet || '';
+    return `${index + 1}. ${title}\nURL: ${url}\nSummary: ${snippet}`;
+  });
+
+  return `WEB SEARCH SNAPSHOT (${payload.query}):\n${lines.join('\n\n')}`;
 };
 
 // Helper to verify admin token
@@ -355,6 +384,13 @@ app.post('/api/chat', async (req, res) => {
       searchExperience(message)
     ]);
     const kbContext = buildKnowledgeContext(relevantKB, relevantExp);
+    let webSearchContext = '';
+
+    // Hard-rule: when user mentions potentially new/emerging tech keywords, search web first.
+    if (hasEmergingTechSignal(message)) {
+      const webResults = await web_search(message);
+      webSearchContext = buildWebSearchContext(webResults);
+    }
 
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Chat start (Session: ${sessionId}, Model: ${modelName})`);
     
@@ -365,12 +401,12 @@ app.post('/api/chat', async (req, res) => {
       // --- DEEPSEEK (OPENAI COMPATIBLE) FLOW ---
       const messages: any[] = [
         { role: 'system', content: (cachedConfig as any).systemInstruction },
-        { role: 'user', content: `KNOWLEDGE BASE: ${kbContext}\n\nCONTEXT: ${leadContext}` },
+        { role: 'user', content: `KNOWLEDGE BASE: ${kbContext}\n\n${webSearchContext ? `${webSearchContext}\n\n` : ''}CONTEXT: ${leadContext}` },
         { role: 'assistant', content: 'Understood. I will use the company knowledge and lead context for my response.' },
         ...buildOpenAIMessages(history)
       ];
 
-      let response = await callDeepSeek(messages, {
+      let response: any = await callDeepSeek(messages, {
         tools: openAIBrowsingTools,
         tool_choice: 'auto'
       });
@@ -394,6 +430,14 @@ app.post('/api/chat', async (req, res) => {
               tool_call_id: toolCall.id,
               content: JSON.stringify(textContent)
             });
+          } else if (toolCall.function.name === 'web_search') {
+            const args = JSON.parse(toolCall.function.arguments);
+            const result = await web_search(args.query);
+            messages.push({
+              role: 'tool',
+              tool_call_id: toolCall.id,
+              content: JSON.stringify(result)
+            });
           }
         }
 
@@ -407,14 +451,14 @@ app.post('/api/chat', async (req, res) => {
       // If DeepSeek didn't return JSON but we need it, we could do a follow-up
       if (rawText && !rawText.includes('{')) {
         messages.push({ role: 'user', content: 'Please output your response in the required JSON format.' });
-        const jsonResponse = await callDeepSeek(messages, { response_format: { type: 'json_object' } });
+        const jsonResponse: any = await callDeepSeek(messages, { response_format: { type: 'json_object' } });
         rawText = jsonResponse.choices[0].message.content;
       }
 
     } else {
       // --- GEMINI FLOW ---
       const contents = [
-        { role: 'user', parts: [{ text: `KNOWLEDGE BASE: ${kbContext}\n\nCONTEXT: ${leadContext}` }] },
+        { role: 'user', parts: [{ text: `KNOWLEDGE BASE: ${kbContext}\n\n${webSearchContext ? `${webSearchContext}\n\n` : ''}CONTEXT: ${leadContext}` }] },
         { role: 'model', parts: [{ text: 'Understood. I will use the company knowledge and lead context for my response.' }] },
         ...conversationHistory
       ];
@@ -454,6 +498,15 @@ app.post('/api/chat', async (req, res) => {
                 inlineData: { mimeType: 'image/jpeg', data: screenshot }
               });
             }
+          } else if (call.functionCall?.name === 'web_search') {
+            const query = (call.functionCall.args as any).query;
+            const result = await web_search(query);
+            responseParts.push({
+              functionResponse: {
+                name: 'web_search',
+                response: { content: result }
+              }
+            });
           }
         }
 
@@ -469,17 +522,15 @@ app.post('/api/chat', async (req, res) => {
         });
       }
 
-      if (!response.candidates?.[0]?.content?.parts?.find(p => p.text?.includes('{'))) {
-        response = await (ai as any).models.generateContent({
-          model: modelName,
-          contents,
-          config: {
-            ...cachedConfig,
-            responseMimeType: 'application/json',
-            ...DEFAULT_GEN_CONFIG,
-          },
-        });
-      }
+      response = await (ai as any).models.generateContent({
+        model: modelName,
+        contents,
+        config: {
+          ...cachedConfig,
+          responseMimeType: 'application/json',
+          ...DEFAULT_GEN_CONFIG,
+        },
+      });
       rawText = response.text || '';
     }
 
@@ -491,7 +542,7 @@ app.post('/api/chat', async (req, res) => {
 
     console.log(`[${new Date().toLocaleTimeString()}] [API-CALL] Chat success (${responseTime}s, Knowledge: ${relevantKB.length}, Tool calls: ${callCount})`);
 
-    const parsed = normalizeChallengeResponse(rawText);
+    const parsed = normalizeChatResponse(rawText);
     parsed.lead = inferLeadForClosing(parsed.lead, message);
     addMessage(sessionId, 'model', parsed.reply);
     upsertLead(sessionId, parsed.lead);
@@ -562,6 +613,15 @@ app.post('/api/v1/external/quote', handleExternalQuote);
 
 // Phục vụ các file static từ thư mục dist (sau khi build frontend)
 const distPath = path.join(__dirname, '../dist');
+
+app.get('/robots.txt', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.type('text/plain');
+  res.sendFile(path.join(distPath, 'robots.txt'));
+});
+
 app.use(express.static(distPath));
 
 // Route cuối cùng: Phục vụ index.html cho tất cả các request không phải API (hỗ trợ client-side routing)

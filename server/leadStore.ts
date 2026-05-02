@@ -212,6 +212,13 @@ export const getAllLeads = (): LeadSummary[] => {
       s.admin_status
     FROM leads l
     JOIN sessions s ON l.session_id = s.id
+    WHERE EXISTS (
+      SELECT 1
+      FROM messages m
+      WHERE m.session_id = l.session_id
+        AND m.role = 'user'
+        AND TRIM(COALESCE(m.content, '')) <> ''
+    )
     ORDER BY s.updated_at DESC
   `).all() as any[];
 

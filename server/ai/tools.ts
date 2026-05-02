@@ -30,6 +30,39 @@ function cleanHtml(html: string): string {
 
 import { advancedBrowse } from './browsing';
 
+type WebSearchResult = {
+  title: string;
+  url: string;
+  snippet: string;
+  sourceDomain: string;
+};
+
+const DEFAULT_WHITELIST = [
+  'docs.anthropic.com',
+  'platform.openai.com',
+  'openai.com',
+  'ai.google.dev',
+  'cloud.google.com',
+  'developers.cloudflare.com',
+  'developer.mozilla.org',
+  'github.com',
+  'docs.n8n.io',
+];
+
+const SEARCH_DOMAIN_WHITELIST = String(process.env.SEARCH_DOMAIN_WHITELIST || DEFAULT_WHITELIST.join(','))
+  .split(',')
+  .map((item) => item.trim().toLowerCase())
+  .filter(Boolean);
+
+function isWhitelistedUrl(rawUrl: string): boolean {
+  try {
+    const host = new URL(rawUrl).hostname.toLowerCase();
+    return SEARCH_DOMAIN_WHITELIST.some((domain) => host === domain || host.endsWith(`.${domain}`));
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Tool truy cập Website nâng cao (Hỗ trợ JS và Chụp ảnh)
  */
@@ -43,6 +76,80 @@ export async function browse_url(url: string): Promise<any> {
     return result;
   } catch (error: any) {
     console.error(`[${new Date().toLocaleTimeString()}] [TOOL-CALL] browse_url (PRO) FAILED:`, error.message);
+    return { error: error.message };
+  }
+}
+
+/**
+ * Tool tìm kiếm web theo từ khóa để cập nhật công nghệ mới.
+ */
+export async function web_search(query: string): Promise<{ query: string; results: WebSearchResult[] } | { error: string }> {
+  const start = Date.now();
+  console.log(`[${new Date().toLocaleTimeString()}] [TOOL-CALL] web_search start: ${query}`);
+
+  try {
+    const endpoint = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+    const res = await fetch(endpoint, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+      },
+    });
+
+    if (!res.ok) {
+      return { error: `Search request failed: ${res.status}` };
+    }
+
+    const html = await res.text();
+    const parsedResults: WebSearchResult[] = [];
+    const regex = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?(?:<a[^>]*class="result__snippet"[^>]*>([\s\S]*?)<\/a>|<div[^>]*class="result__snippet"[^>]*>([\s\S]*?)<\/div>)/gim;
+
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(html)) !== null && parsedResults.length < 8) {
+      const rawUrl = match[1] || '';
+      const title = (match[2] || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      const snippetRaw = (match[3] || match[4] || '');
+      const snippet = snippetRaw.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      if (!rawUrl || !title) continue;
+
+      let finalUrl = rawUrl;
+      try {
+        if (rawUrl.startsWith('//duckduckgo.com/l/?')) {
+          const wrapped = new URL(`https:${rawUrl}`);
+          const uddg = wrapped.searchParams.get('uddg');
+          if (uddg) finalUrl = decodeURIComponent(uddg);
+        } else if (rawUrl.startsWith('/l/?')) {
+          const wrapped = new URL(`https://duckduckgo.com${rawUrl}`);
+          const uddg = wrapped.searchParams.get('uddg');
+          if (uddg) finalUrl = decodeURIComponent(uddg);
+        }
+      } catch {
+        finalUrl = rawUrl;
+      }
+
+      let sourceDomain = '';
+      try {
+        sourceDomain = new URL(finalUrl).hostname.toLowerCase();
+      } catch {
+        sourceDomain = '';
+      }
+
+      parsedResults.push({
+        title,
+        url: finalUrl,
+        snippet,
+        sourceDomain,
+      });
+    }
+    const filteredResults = parsedResults
+      .filter((item) => isWhitelistedUrl(item.url))
+      .slice(0, 5);
+
+    console.log(
+      `[${new Date().toLocaleTimeString()}] [TOOL-CALL] web_search success (${Date.now() - start}ms, ${filteredResults.length}/${parsedResults.length} whitelisted results)`
+    );
+    return { query, results: filteredResults };
+  } catch (error: any) {
+    console.error(`[${new Date().toLocaleTimeString()}] [TOOL-CALL] web_search FAILED:`, error.message);
     return { error: error.message };
   }
 }
@@ -65,6 +172,20 @@ export const browsingTools: Tool[] = [
             }
           },
           required: ["url"]
+        }
+      },
+      {
+        name: "web_search",
+        description: "Searches the web for recent information about technologies, tools, and trends. Use this when user mentions a technology or keyword that is new/unknown and no reliable internal context is available.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            query: {
+              type: Type.STRING,
+              description: "Search query describing the technology, framework, or topic to research."
+            }
+          },
+          required: ["query"]
         }
       }
     ]
@@ -89,6 +210,23 @@ export const openAIBrowsingTools = [
           }
         },
         required: ["url"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "web_search",
+      description: "Searches the web for recent information about technologies, tools, and trends.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "Search query describing the technology, framework, or topic to research."
+          }
+        },
+        required: ["query"]
       }
     }
   }

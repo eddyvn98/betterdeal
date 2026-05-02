@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { LeadQualification, Message } from '../src/types';
+import { logger } from './utils/logger.ts';
 
 const escapeTelegram = (value: string) => value.replace(/[_*\[\]()~\x60>#+\-=|{}.!]/g, '\\$&');
 
@@ -8,7 +9,7 @@ const buildLeadText = (lead: LeadQualification, transcript: Message[], sessionId
     '🔔 *Lead mới từ Portfolio*',
     '--------------------------',
     'ID: ' + sessionId,
-    'Tóm tắt: ' + (lead.projectSummary || 'Chưa rõ'),
+    'Tóm tắt: ' + (lead.projectSummary?.substring(0, 300) + (lead.projectSummary?.length > 300 ? '...' : '') || 'Chưa rõ'),
     'Loại dự án: ' + (lead.projectType || 'Chưa rõ'),
     'Báo giá dự kiến: ' + (lead.estimatedQuote || 'Chưa rõ'),
     'Demo: ' + (lead.demoTimeline || 'Chưa rõ'),
@@ -16,7 +17,7 @@ const buildLeadText = (lead: LeadQualification, transcript: Message[], sessionId
     'Ngân sách: ' + (lead.budget || 'Chưa rõ'),
     'Liên hệ: ' + ([lead.contactName, lead.contactChannel, lead.contactValue].filter(Boolean).join(' • ') || 'Chưa có'),
     'Tóm tắt admin: ' + (lead.adminSummary || 'Chưa có'),
-    'Tin nhắn gần nhất: ' + (transcript.at(-1)?.content || 'Không có'),
+    'Tin nhắn gần nhất: ' + (transcript.at(-1)?.content?.substring(0, 500) + (transcript.at(-1)?.content?.length > 500 ? '...' : '') || 'Không có'),
   ];
 
   return lines.join('\n');
@@ -24,7 +25,7 @@ const buildLeadText = (lead: LeadQualification, transcript: Message[], sessionId
 
 export const notifyAdmin = async (sessionId: string, lead: LeadQualification, transcript: Message[]) => {
   const text = buildLeadText(lead, transcript, sessionId);
-  console.log('\n--- ADMIN NOTIFICATION ---\n' + text + '\n--------------------------\n');
+  logger.info({ sessionId }, 'New Admin Notification');
 
   const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
   const telegramChatId = process.env.TELEGRAM_CHAT_ID;
@@ -58,7 +59,7 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
       reported = true;
     } else {
       const errorBody = await telegramResponse.text();
-      console.error('Telegram notify failed:', telegramResponse.status, errorBody);
+      logger.error({ status: telegramResponse.status, errorBody }, 'Telegram notify failed');
     }
   }
 
@@ -73,14 +74,14 @@ export const notifyAdmin = async (sessionId: string, lead: LeadQualification, tr
       reported = true;
     } else {
       const errorBody = await zaloResponse.text();
-      console.error('Zalo relay failed:', zaloResponse.status, errorBody);
+      logger.error({ status: zaloResponse.status, errorBody }, 'Zalo relay failed');
     }
   }
 
   // If no external notification worked, we still count it as success in local testing
   // if console log was successful.
   if (!reported) {
-    console.log('Note: No Telegram/Zalo configured. Notification logged to console only.');
+    logger.warn({ sessionId }, 'No Telegram/Zalo configured. Notification logged only.');
   }
 
   const hasConfiguredChannel = Boolean((telegramBotToken && telegramChatId) || zaloWebhookUrl);
@@ -99,7 +100,7 @@ export const setupBotMenu = async () => {
   const appUrl = process.env.APP_URL;
 
   if (!token || !adminSecret || !appUrl) {
-    console.warn('[TELEGRAM] Thiếu cấu hình để setup nút Menu Bot.');
+    logger.warn('[TELEGRAM] Thiếu cấu hình để setup nút Menu Bot.');
     return;
   }
 
@@ -129,27 +130,27 @@ export const setupBotMenu = async () => {
       })
     });
 
-    const result = await response.json();
+    const result = await response.json() as any;
     if (result.ok) {
-      console.log('[TELEGRAM] Đã chuyển Menu Bot sang chế độ Commands thành công.');
-      
+      logger.info('[TELEGRAM] Đã chuyển Menu Bot sang chế độ Commands thành công.');
+
       // Gửi một tin nhắn hướng dẫn cho Admin vào chat (nếu chat_id có sẵn)
       const chatId = process.env.TELEGRAM_CHAT_ID;
       if (chatId) {
-         await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({
-             chat_id: chatId,
-             text: `👋 Chào Admin! Để truy cập Dashboard Quản trị một cách tốt nhất, anh hãy sử dụng link sau và mở bằng *Chrome* hoặc *Safari* trên điện thoại:\n\n🔗 [Mở Admin Dashboard Tổng](${dashboardUrl})\n\n_Anh có thể ghim tin nhắn này để truy cập bất cứ lúc nào!_`,
-             parse_mode: 'Markdown'
-           })
-         });
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `👋 Chào Admin! Để truy cập Dashboard Quản trị một cách tốt nhất, anh hãy sử dụng link sau và mở bằng *Chrome* hoặc *Safari* trên điện thoại:\n\n🔗 [Mở Admin Dashboard Tổng](${dashboardUrl})\n\n_Anh có thể ghim tin nhắn này để truy cập bất cứ lúc nào!_`,
+            parse_mode: 'Markdown'
+          })
+        });
       }
     } else {
-      console.warn('[TELEGRAM] Không thể set Menu Button:', result.description);
+      logger.warn({ description: result.description }, '[TELEGRAM] Không thể set Menu Button');
     }
   } catch (err) {
-    console.error('[TELEGRAM] Lỗi khi cài đặt Menu Bot:', err);
+    logger.error({ err }, '[TELEGRAM] Lỗi khi cài đặt Menu Bot');
   }
 };

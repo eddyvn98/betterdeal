@@ -2,19 +2,75 @@ import { ChatApiResponse, LeadQualification, Message } from '../types';
 
 const API_BASE = '/api';
 
-export const createSession = async (): Promise<{ sessionId: string }> => {
+const extractMessageContent = (value: unknown): string => {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === 'object' && ('reply' in parsed || 'message' in parsed || 'content' in parsed)) {
+        return extractMessageContent((parsed as any).reply ?? (parsed as any).message ?? (parsed as any).content);
+      }
+    } catch {
+      // Plain markdown text is the normal path.
+    }
+    return trimmed.replace(/\[object Object\]/g, '').trim();
+  }
+
+  if (!value || typeof value !== 'object') return '';
+
+  const record = value as Record<string, unknown>;
+  return extractMessageContent(record.reply ?? record.content ?? record.message ?? record.text);
+};
+
+const normalizeMessage = (message: unknown): Message => {
+  const record = message && typeof message === 'object' ? message as Partial<Message> & Record<string, unknown> : {};
+  return {
+    role: record.role === 'user' ? 'user' : 'model',
+    content: extractMessageContent(record.content ?? record.reply ?? record.message ?? message),
+    attachments: Array.isArray(record.attachments) ? record.attachments : undefined,
+  };
+};
+
+const normalizeChatResponse = (data: unknown): ChatApiResponse => ({
+  ...(data as ChatApiResponse),
+  message: normalizeMessage((data as ChatApiResponse).message),
+});
+
+const normalizeSessionState = (data: unknown): {
+  sessionId: string;
+  messages: Message[];
+  lead: LeadQualification;
+  adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
+} => ({
+  ...(data as {
+    sessionId: string;
+    messages: Message[];
+    lead: LeadQualification;
+    adminStatus: 'idle' | 'sending' | 'sent' | 'failed';
+  }),
+  messages: Array.isArray((data as any)?.messages) ? (data as any).messages.map(normalizeMessage) : [],
+});
+
+const normalizeSessionResponse = (data: unknown): { sessionId: string } => ({
+  ...(data as Record<string, unknown>),
+  sessionId: String((data as any)?.sessionId || ''),
+});
+
+export const createSession = async (turnstileToken?: string): Promise<{ sessionId: string }> => {
   const response = await fetch(`${API_BASE}/sessions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ turnstileToken }),
   });
 
   if (!response.ok) {
     throw new Error(`Cannot create session: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return normalizeSessionResponse(data);
 };
 
 export const sendChatMessage = async (payload: {
@@ -35,7 +91,8 @@ export const sendChatMessage = async (payload: {
     throw new Error(`Chat request failed: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return normalizeChatResponse(data);
 };
 
 export const fetchSessionState = async (sessionId: string): Promise<{
@@ -50,7 +107,8 @@ export const fetchSessionState = async (sessionId: string): Promise<{
     throw new Error(`Cannot load session: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return normalizeSessionState(data);
 };
 
 export const fetchAdminLeads = async (auth: string, sessionId?: string): Promise<any[]> => {

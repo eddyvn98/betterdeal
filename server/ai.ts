@@ -58,6 +58,63 @@ const normalizeDealStage = (value: unknown): LeadQualification['dealStage'] => {
   return 'discovery';
 };
 
+const coerceMarkdownText = (value: unknown): string => {
+  if (typeof value === 'string') return value.trim();
+  if (!value || typeof value !== 'object') return '';
+
+  const record = value as Record<string, unknown>;
+  return coerceMarkdownText(record.reply ?? record.content ?? record.message ?? record.text);
+};
+
+const parseJsonMaybe = (value: unknown): unknown => {
+  if (typeof value !== 'string') return value;
+
+  try {
+    return JSON.parse(cleanJsonString(value));
+  } catch {
+    return value;
+  }
+};
+
+const unwrapAiPayload = (raw: unknown): unknown => {
+  let payload = parseJsonMaybe(raw);
+
+  for (let i = 0; i < 3; i++) {
+    if (!payload || typeof payload !== 'object') break;
+
+    const record = payload as Record<string, unknown>;
+    if (typeof record.reply === 'string') {
+      const nestedReply = parseJsonMaybe(record.reply);
+      if (
+        nestedReply &&
+        typeof nestedReply === 'object' &&
+        (Object.prototype.hasOwnProperty.call(nestedReply, 'reply') ||
+          Object.prototype.hasOwnProperty.call(nestedReply, 'lead'))
+      ) {
+        payload = { ...record, ...(nestedReply as Record<string, unknown>) };
+        continue;
+      }
+    }
+
+    if (!record.reply && (record.content || record.message || record.text)) {
+      payload = parseJsonMaybe(record.content ?? record.message ?? record.text);
+      continue;
+    }
+
+    break;
+  }
+
+  return payload;
+};
+
+const sanitizeReplyText = (reply: string): string => {
+  return reply
+    .replace(/\[object Object\]/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+};
+
 /**
  * Lấy chỉ dẫn hệ thống cố định (để có thể cache)
  */
@@ -130,12 +187,12 @@ export const normalizeChallengeResponse = (rawText: string): ChallengeAIResponse
   } catch (error) {
     console.error('Failed to parse AI JSON:', error);
     console.debug('Raw AI Text that failed to parse:', rawText);
-    
-    // Thử bóc tách phần text bên ngoài JSON (nếu có)
-    const fallbackReply = rawText.replace(/\{[\s\S]*\}/, '').trim();
-    
+
+    // Fallback mềm: ưu tiên trả về raw text để không "câm" trước khách hàng.
+    const fallbackReply = rawText.trim();
+
     return {
-      reply: fallbackReply || 'Phản hồi từ AI gặp sự cố định dạng, vui lòng thử lại câu hỏi khác.',
+      reply: fallbackReply || 'Mình đang xử lý hơi chậm, bạn gửi lại yêu cầu giúp mình nhé.',
       lead: { ...emptyLead, adminSummary: '⚠️ JSON parse failed: ' + rawText.slice(0, 100) },
     };
   }
@@ -166,6 +223,61 @@ export const normalizeChallengeResponse = (rawText: string): ChallengeAIResponse
   // Đảm bảo reply không bao giờ rỗng sau khi parse thành công
   if (!result.reply || result.reply.trim().length === 0) {
     result.reply = 'AI đã xử lý xong nhưng không trích xuất được phản hồi văn bản phù hợp.';
+  }
+
+  return result;
+};
+
+export const normalizeChatResponse = (rawText: string): ChallengeAIResponse => {
+  const unwrappedPayload = unwrapAiPayload(rawText);
+
+  if (!rawText || rawText.trim().length === 0) {
+    return {
+      reply: 'He thong AI dang ban xu ly du lieu, ban vui long gui lai yeu cau nhe.',
+      lead: { ...emptyLead, adminSummary: 'AI returned empty response' },
+    };
+  }
+
+  let parsedJson: any = {};
+  try {
+    parsedJson = unwrappedPayload && typeof unwrappedPayload === 'object'
+      ? unwrappedPayload
+      : JSON.parse(cleanJsonString(String(unwrappedPayload || rawText)));
+  } catch (error) {
+    console.error('Failed to parse AI JSON:', error);
+    console.debug('Raw AI Text that failed to parse:', rawText);
+
+    const fallbackReply = sanitizeReplyText(coerceMarkdownText(unwrappedPayload) || rawText.trim());
+    return {
+      reply: fallbackReply || 'Minh dang xu ly hoi cham, ban gui lai yeu cau giup minh nhe.',
+      lead: { ...emptyLead, adminSummary: 'JSON parse failed: ' + rawText.slice(0, 100) },
+    };
+  }
+
+  parsedJson.reply = sanitizeReplyText(coerceMarkdownText(parsedJson.reply ?? parsedJson.content ?? parsedJson.message ?? parsedJson.text));
+
+  const validation = ChallengeAIResponseSchema.safeParse(parsedJson);
+  if (!validation.success) {
+    console.warn('Zod Validation Warning (Partial match attempted):', validation.error.format());
+
+    const partialLead = typeof parsedJson.lead === 'object' && parsedJson.lead !== null
+      ? {
+          ...emptyLead,
+          ...parsedJson.lead,
+          dealStage: normalizeDealStage(parsedJson.lead.dealStage),
+        }
+      : emptyLead;
+
+    return {
+      reply: parsedJson.reply || 'Phan hoi khong dung cau truc yeu cau, vui long thu lai.',
+      lead: partialLead,
+    };
+  }
+
+  const result = validation.data;
+  result.reply = sanitizeReplyText(result.reply);
+  if (!result.reply) {
+    result.reply = 'AI da xu ly xong nhung khong trich xuat duoc phan hoi van ban phu hop.';
   }
 
   return result;
